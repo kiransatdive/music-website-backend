@@ -1,22 +1,21 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import multer from 'multer';
-import { Request } from 'express';
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import multer from "multer";
+import { Request } from "express";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 //Directory Setup
 
-const audioDir = path.join(__dirname, '..', '..', 'uploads', 'audio');
-const artworkDir = path.join(__dirname, '..', '..', 'uploads', 'covers');
+const audioDir = path.join(__dirname, "..", "..", "uploads", "audio");
+const artworkDir = path.join(__dirname, "..", "..", "uploads", "covers");
 
 // Ensure directories exist
 [audioDir, artworkDir].forEach((dir) => {
   fs.mkdirSync(dir, { recursive: true });
 });
-
 
 //audio upload middleware
 const audioStorage = multer.diskStorage({
@@ -33,18 +32,23 @@ const audioStorage = multer.diskStorage({
 const audioFileFilter = (
   _req: Request,
   file: Express.Multer.File,
-  callback: multer.FileFilterCallback
+  callback: multer.FileFilterCallback,
 ) => {
-  const allowedMimeTypes = ['audio/wav', 'audio/x-wav', 'audio/wave', 'audio/vnd.wave'];
-  const allowedExtensions = ['.wav'];
+  const allowedMimeTypes = [
+    "audio/wav",
+    "audio/x-wav",
+    "audio/wave",
+    "audio/vnd.wave",
+  ];
+  const allowedExtensions = [".wav"];
 
   if (!allowedMimeTypes.includes(file.mimetype)) {
-    return callback(new Error('Only WAV audio files are accepted'));
+    return callback(new Error("Only WAV audio files are accepted"));
   }
 
   const ext = path.extname(file.originalname).toLowerCase();
   if (!allowedExtensions.includes(ext)) {
-    return callback(new Error('File extension must be .wav'));
+    return callback(new Error("File extension must be .wav"));
   }
 
   callback(null, true);
@@ -57,7 +61,6 @@ export const uploadAudio = multer({
   },
   fileFilter: audioFileFilter,
 });
-
 
 //artwork upload middleware
 const artworkStorage = multer.diskStorage({
@@ -74,18 +77,18 @@ const artworkStorage = multer.diskStorage({
 const artworkFileFilter = (
   _req: Request,
   file: Express.Multer.File,
-  callback: multer.FileFilterCallback
+  callback: multer.FileFilterCallback,
 ) => {
-  const allowedMimeTypes = ['image/jpeg', 'image/png'];
-  const allowedExtensions = ['.jpg', '.jpeg', '.png'];
+  const allowedMimeTypes = ["image/jpeg", "image/png"];
+  const allowedExtensions = [".jpg", ".jpeg", ".png"];
 
   if (!allowedMimeTypes.includes(file.mimetype)) {
-    return callback(new Error('Only JPG and PNG images are accepted'));
+    return callback(new Error("Only JPG and PNG images are accepted"));
   }
 
   const ext = path.extname(file.originalname).toLowerCase();
   if (!allowedExtensions.includes(ext)) {
-    return callback(new Error('File must be JPG or PNG'));
+    return callback(new Error("File must be JPG or PNG"));
   }
 
   callback(null, true);

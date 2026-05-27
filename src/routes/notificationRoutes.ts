@@ -1,18 +1,15 @@
-import { Router } from 'express';
+import { Router } from "express";
 import {
   getNotifications,
   markAsRead,
   markAllAsRead,
-} from '../controllers/notificationController.js';
-import { authenticateArtist } from '../middleware/artistAuthMiddleware.js';
+} from "../controllers/notificationController.js";
+import { authenticateArtist } from "../middleware/artistAuthMiddleware.js";
 
 const router = Router();
 
-// All these routes require artist authentication
-router.use('/notifications', authenticateArtist);
-
-router.get('/notifications', getNotifications);
-router.patch('/notifications/read-all', markAllAsRead);
-router.patch('/notifications/:id/read', markAsRead);
+router.get("/notifications", authenticateArtist, getNotifications);
+router.patch("/notifications/read-all", authenticateArtist, markAllAsRead);
+router.patch("/notifications/:id/read", authenticateArtist, markAsRead);
 
 export default router;

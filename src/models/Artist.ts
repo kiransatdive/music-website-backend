@@ -1,5 +1,5 @@
-import { DataTypes, Model, Optional } from 'sequelize';
-import sequelize from '../config/database.js';
+import { DataTypes, Model, Optional } from "sequelize";
+import sequelize from "../config/database.js";
 
 // Attribute Interfaces
 
@@ -28,13 +28,15 @@ export interface ArtistAttributes {
   updatedAt?: Date;
 }
 
-export interface ArtistCreationAttributes
-  extends Optional<ArtistAttributes, 'id'> { }
-
+export interface ArtistCreationAttributes extends Optional<
+  ArtistAttributes,
+  "id"
+> {}
 
 class Artist
   extends Model<ArtistAttributes, ArtistCreationAttributes>
-  implements ArtistAttributes {
+  implements ArtistAttributes
+{
   public id!: number;
   public name!: string;
   public email!: string;
@@ -155,19 +157,15 @@ Artist.init(
     role: {
       type: DataTypes.STRING(50),
       allowNull: false,
-      defaultValue: 'artist',
+      defaultValue: "artist",
     },
   },
   {
     sequelize,
-    tableName: 'artists',
+    tableName: "artists",
     timestamps: true,
-    underscored: true,   // maps camelCase fields → snake_case columns
-    indexes: [
-      { unique: true, fields: ['email'] },
-      { unique: true, fields: ['phone'] },
-    ],
-  }
+    underscored: true, // maps camelCase fields → snake_case columns
+  },
 );
 
 // Associations

@@ -1,9 +1,9 @@
-import ffmpeg from 'fluent-ffmpeg';
-import ffprobeInstaller from '@ffprobe-installer/ffprobe';
-import ffmpegStatic from 'ffmpeg-static';
-import sharp from 'sharp';
-import fs from 'fs/promises';
-import path from 'path';
+import ffmpeg from "fluent-ffmpeg";
+import ffprobeInstaller from "@ffprobe-installer/ffprobe";
+import ffmpegStatic from "ffmpeg-static";
+import sharp from "sharp";
+import fs from "fs/promises";
+import path from "path";
 
 // ─── Set FFmpeg / FFprobe binary paths ───────────────────────────────────────
 ffmpeg.setFfprobePath(ffprobeInstaller.path);
@@ -22,7 +22,9 @@ export interface AudioMetadata {
  * Extract audio metadata using FFmpeg
  * Returns duration in seconds
  */
-export async function extractAudioMetadata(filePath: string): Promise<AudioMetadata> {
+export async function extractAudioMetadata(
+  filePath: string,
+): Promise<AudioMetadata> {
   return new Promise((resolve, reject) => {
     ffmpeg.ffprobe(filePath, (err: Error | null, metadata: any) => {
       if (err) {
@@ -32,17 +34,18 @@ export async function extractAudioMetadata(filePath: string): Promise<AudioMetad
 
       const stream = metadata.streams[0];
       if (!stream) {
-        reject(new Error('No audio stream found in file'));
+        reject(new Error("No audio stream found in file"));
         return;
       }
 
       resolve({
         duration: Math.round(metadata.format.duration || 0),
-        format: metadata.format.format_name || 'unknown',
-        codec: stream.codec_name || 'unknown',
-        bitrate: typeof stream.bit_rate === 'string'
-          ? parseInt(stream.bit_rate, 10)
-          : (stream.bit_rate || 0),
+        format: metadata.format.format_name || "unknown",
+        codec: stream.codec_name || "unknown",
+        bitrate:
+          typeof stream.bit_rate === "string"
+            ? parseInt(stream.bit_rate, 10)
+            : stream.bit_rate || 0,
       });
     });
   });
@@ -63,7 +66,7 @@ export interface ImageMetadata {
 export async function extractImageMetadata(
   filePath: string,
   minWidth: number = 3000,
-  minHeight: number = 3000
+  minHeight: number = 3000,
 ): Promise<{ valid: boolean; metadata: ImageMetadata; error?: string }> {
   try {
     const data = await sharp(filePath).metadata();
@@ -72,7 +75,7 @@ export async function extractImageMetadata(
     const metadata: ImageMetadata = {
       width: data.width || 0,
       height: data.height || 0,
-      format: data.format || 'unknown',
+      format: data.format || "unknown",
       size: stats.size,
     };
 
@@ -80,7 +83,7 @@ export async function extractImageMetadata(
       return {
         valid: false,
         metadata,
-        error: 'Could not determine image dimensions',
+        error: "Could not determine image dimensions",
       };
     }
 
@@ -94,10 +97,11 @@ export async function extractImageMetadata(
 
     return { valid: true, metadata };
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
     return {
       valid: false,
-      metadata: { width: 0, height: 0, format: 'unknown', size: 0 },
+      metadata: { width: 0, height: 0, format: "unknown", size: 0 },
       error: `Failed to validate image: ${errorMessage}`,
     };
   }
@@ -113,14 +117,21 @@ export interface FileValidationResult {
 /**
  * Validate audio file (WAV only)
  */
-export function validateAudioFile(file: Express.Multer.File): FileValidationResult {
-  const ALLOWED_MIME_TYPES = ['audio/wav', 'audio/x-wav', 'audio/wave', 'audio/vnd.wave'];
-  const ALLOWED_EXTENSIONS = ['.wav'];
+export function validateAudioFile(
+  file: Express.Multer.File,
+): FileValidationResult {
+  const ALLOWED_MIME_TYPES = [
+    "audio/wav",
+    "audio/x-wav",
+    "audio/wave",
+    "audio/vnd.wave",
+  ];
+  const ALLOWED_EXTENSIONS = [".wav"];
 
   if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
     return {
       valid: false,
-      error: 'Only WAV audio files are accepted',
+      error: "Only WAV audio files are accepted",
     };
   }
 
@@ -128,7 +139,7 @@ export function validateAudioFile(file: Express.Multer.File): FileValidationResu
   if (!ALLOWED_EXTENSIONS.includes(fileExtension)) {
     return {
       valid: false,
-      error: 'File extension must be .wav',
+      error: "File extension must be .wav",
     };
   }
 
@@ -138,14 +149,16 @@ export function validateAudioFile(file: Express.Multer.File): FileValidationResu
 /**
  * Validate artwork file (JPG/PNG only)
  */
-export function validateArtworkFile(file: Express.Multer.File): FileValidationResult {
-  const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png'];
-  const ALLOWED_EXTENSIONS = ['.jpg', '.jpeg', '.png'];
+export function validateArtworkFile(
+  file: Express.Multer.File,
+): FileValidationResult {
+  const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png"];
+  const ALLOWED_EXTENSIONS = [".jpg", ".jpeg", ".png"];
 
   if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
     return {
       valid: false,
-      error: 'Only JPG and PNG images are accepted',
+      error: "Only JPG and PNG images are accepted",
     };
   }
 
@@ -153,7 +166,7 @@ export function validateArtworkFile(file: Express.Multer.File): FileValidationRe
   if (!ALLOWED_EXTENSIONS.includes(fileExtension)) {
     return {
       valid: false,
-      error: 'File extension must be .jpg, .jpeg, or .png',
+      error: "File extension must be .jpg, .jpeg, or .png",
     };
   }
 

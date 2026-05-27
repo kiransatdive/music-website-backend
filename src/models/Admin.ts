@@ -1,5 +1,5 @@
-import { DataTypes, Model, Optional } from 'sequelize';
-import sequelize from '../config/database.js';
+import { DataTypes, Model, Optional } from "sequelize";
+import sequelize from "../config/database.js";
 
 export interface AdminAttributes {
   id: number;
@@ -10,8 +10,10 @@ export interface AdminAttributes {
   updatedAt?: Date;
 }
 
-export interface AdminCreationAttributes
-  extends Optional<AdminAttributes, 'id' | 'role'> {}
+export interface AdminCreationAttributes extends Optional<
+  AdminAttributes,
+  "id" | "role"
+> {}
 
 class Admin
   extends Model<AdminAttributes, AdminCreationAttributes>
@@ -45,15 +47,14 @@ Admin.init(
     role: {
       type: DataTypes.STRING(50),
       allowNull: false,
-      defaultValue: 'admin',
+      defaultValue: "admin",
     },
   },
   {
     sequelize,
-    tableName: 'admins',
+    tableName: "admins",
     timestamps: true,
     underscored: true,
-    indexes: [{ unique: true, fields: ['email'] }],
   },
 );
 

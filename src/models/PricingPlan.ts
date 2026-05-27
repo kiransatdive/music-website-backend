@@ -1,51 +1,51 @@
 import { DataTypes, Model, Optional } from "sequelize";
 import sequelize from "../config/database.js";
 
-export interface SiteContentAttributes {
+export interface PricingPlanAttributes {
   id: number;
-  section: string;
-  key?: string;
-  content: any;
+  name: string;
+  description: string;
+  price: number;
   isActive: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-export interface SiteContentCreationAttributes extends Optional<
-  SiteContentAttributes,
-  "id" | "key" | "isActive"
+export interface PricingPlanCreationAttributes extends Optional<
+  PricingPlanAttributes,
+  "id" | "isActive"
 > {}
 
-class SiteContent
-  extends Model<SiteContentAttributes, SiteContentCreationAttributes>
-  implements SiteContentAttributes
+class PricingPlan
+  extends Model<PricingPlanAttributes, PricingPlanCreationAttributes>
+  implements PricingPlanAttributes
 {
   public id!: number;
-  public section!: string;
-  public key?: string;
-  public content!: any;
+  public name!: string;
+  public description!: string;
+  public price!: number;
   public isActive!: boolean;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
 
-SiteContent.init(
+PricingPlan.init(
   {
     id: {
       type: DataTypes.INTEGER.UNSIGNED,
       autoIncrement: true,
       primaryKey: true,
     },
-    section: {
+    name: {
       type: DataTypes.STRING(100),
       allowNull: false,
     },
-    key: {
-      type: DataTypes.STRING(100),
-      allowNull: true,
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: false,
     },
-    content: {
-      type: DataTypes.JSON,
+    price: {
+      type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
     },
     isActive: {
@@ -56,16 +56,10 @@ SiteContent.init(
   },
   {
     sequelize,
-    tableName: "site_contents",
+    tableName: "pricing_plans",
     timestamps: true,
     underscored: true,
-    indexes: [
-      {
-        unique: true,
-        fields: ["section", "key"],
-      },
-    ],
   },
 );
 
-export default SiteContent;
+export default PricingPlan;

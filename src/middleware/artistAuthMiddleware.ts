@@ -1,5 +1,8 @@
-import { NextFunction, Request, Response } from 'express';
-import { ServiceError, verifyArtistToken } from '../services/artistAuthService.js';
+import { NextFunction, Request, Response } from "express";
+import {
+  ServiceError,
+  verifyArtistToken,
+} from "../services/artistAuthService.js";
 
 export interface ArtistRequest extends Request {
   artist?: {
@@ -12,25 +15,25 @@ export interface ArtistRequest extends Request {
 export function authenticateArtist(
   req: ArtistRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   try {
     const authHeader = req.headers.authorization;
 
-    if (!authHeader?.startsWith('Bearer ')) {
+    if (!authHeader?.startsWith("Bearer ")) {
       return res.status(401).json({
         success: false,
-        message: 'Authorization token is required',
+        message: "Authorization token is required",
       });
     }
 
-    const token = authHeader.split(' ')[1];
+    const token = authHeader.split(" ")[1];
     const payload = verifyArtistToken(token);
 
-    if (payload.role !== 'artist') {
+    if (payload.role !== "artist") {
       return res.status(403).json({
         success: false,
-        message: 'Artist access only',
+        message: "Artist access only",
       });
     }
 
@@ -43,7 +46,7 @@ export function authenticateArtist(
     return next();
   } catch (error) {
     const message =
-      error instanceof ServiceError ? error.message : 'Authentication failed';
+      error instanceof ServiceError ? error.message : "Authentication failed";
 
     return res.status(401).json({
       success: false,

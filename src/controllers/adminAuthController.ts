@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
-import { loginAdminService } from '../services/adminAuthService.js';
-import { ServiceError } from '../services/artistAuthService.js';
+import { Request, Response } from "express";
+import { loginAdminService } from "../services/adminAuthService.js";
+import { ServiceError } from "../services/artistAuthService.js";
 
 function sendError(res: Response, error: unknown, fallbackMessage: string) {
   if (error instanceof ServiceError) {
@@ -17,7 +17,7 @@ function sendError(res: Response, error: unknown, fallbackMessage: string) {
 }
 
 function isMissing(value: unknown): boolean {
-  return typeof value !== 'string' || value.trim().length === 0;
+  return typeof value !== "string" || value.trim().length === 0;
 }
 
 export async function loginAdmin(req: Request, res: Response) {
@@ -27,7 +27,7 @@ export async function loginAdmin(req: Request, res: Response) {
     if (isMissing(email) || isMissing(password)) {
       return res.status(400).json({
         success: false,
-        message: 'email and password are required',
+        message: "email and password are required",
       });
     }
 
@@ -38,10 +38,10 @@ export async function loginAdmin(req: Request, res: Response) {
 
     return res.status(200).json({
       success: true,
-      message: 'Admin logged in successfully',
+      message: "Admin logged in successfully",
       data,
     });
   } catch (error) {
-    return sendError(res, error, 'Admin login failed');
+    return sendError(res, error, "Admin login failed");
   }
 }

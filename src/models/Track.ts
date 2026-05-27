@@ -1,8 +1,8 @@
-import { DataTypes, Model, Optional } from 'sequelize';
-import sequelize from '../config/database.js';
-import Release from './Release.js';
+import { DataTypes, Model, Optional } from "sequelize";
+import sequelize from "../config/database.js";
+import Release from "./Release.js";
 
-// Attribute Interfaces 
+// Attribute Interfaces
 
 export interface TrackAttributes {
   id: number;
@@ -17,10 +17,12 @@ export interface TrackAttributes {
   updatedAt?: Date;
 }
 
-export interface TrackCreationAttributes
-  extends Optional<TrackAttributes, 'id'> { }
+export interface TrackCreationAttributes extends Optional<
+  TrackAttributes,
+  "id"
+> { }
 
-// Track Model 
+// Track Model
 
 class Track
   extends Model<TrackAttributes, TrackCreationAttributes>
@@ -48,10 +50,10 @@ Track.init(
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
       references: {
-        model: 'Releases',
-        key: 'id',
+        model: "Releases",
+        key: "id",
       },
-      onDelete: 'CASCADE',
+      onDelete: "CASCADE",
     },
     trackTitle: {
       type: DataTypes.STRING,
@@ -64,7 +66,7 @@ Track.init(
     duration: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      comment: 'Duration in seconds',
+      comment: "Duration in seconds",
     },
     isrc: {
       type: DataTypes.STRING,
@@ -81,17 +83,17 @@ Track.init(
   },
   {
     sequelize,
-    modelName: 'Track',
-    tableName: 'Tracks',
+    modelName: "Track",
+    tableName: "Tracks",
     timestamps: true,
-  }
+  },
 );
 
-// Associations 
+// Associations
 
 Track.belongsTo(Release, {
-  foreignKey: 'releaseId',
-  as: 'release',
+  foreignKey: "releaseId",
+  as: "release",
 });
 
 export default Track;

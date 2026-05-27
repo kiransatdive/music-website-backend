@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
-import { Artist } from '../models/index.js';
-import { Op } from 'sequelize';
+import { Request, Response } from "express";
+import { Artist } from "../models/index.js";
+import { Op } from "sequelize";
 
 export const getAllArtists = async (req: Request, res: Response) => {
   try {
@@ -8,7 +8,7 @@ export const getAllArtists = async (req: Request, res: Response) => {
     const offset = parseInt(req.query.offset as string, 10) || 0;
     const search = req.query.search as string;
 
-    const where: any = { role: 'artist' }; // Optional: Ensure we only get artists
+    const where: any = { role: "artist" }; // Optional: Ensure we only get artists
 
     if (search) {
       where[Op.or] = [
@@ -21,8 +21,8 @@ export const getAllArtists = async (req: Request, res: Response) => {
       where,
       limit,
       offset,
-      order: [['createdAt', 'DESC']],
-      attributes: { exclude: ['password', 'otp'] } // Don't send sensitive info
+      order: [["createdAt", "DESC"]],
+      attributes: { exclude: ["password", "otp"] }, // Don't send sensitive info
     });
 
     res.status(200).json({
@@ -35,7 +35,9 @@ export const getAllArtists = async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    console.error('Get All Artists Error:', error);
-    res.status(500).json({ success: false, message: 'Failed to fetch artists' });
+    console.error("Get All Artists Error:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to fetch artists" });
   }
 };

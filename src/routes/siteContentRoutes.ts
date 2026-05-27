@@ -1,28 +1,25 @@
-import express from 'express';
-import { authenticateAdmin } from '../middleware/adminAuthMiddleware.js';
+import express from "express";
+import { authenticateAdmin } from "../middleware/adminAuthMiddleware.js";
 import {
   getContentBySection,
   getAllContent,
   createOrUpdateContent,
   deleteContent,
-} from '../controllers/siteContentController.js';
+} from "../controllers/siteContentController.js";
 
 const router = express.Router();
 
-// All routes are protected by admin authentication as requested
-router.use(authenticateAdmin);
-
 // Get all site content
-router.get('/admin/content', getAllContent);
+router.get("/admin/content", authenticateAdmin, getAllContent);
 
 // Get content for a specific section
-router.get('/admin/content/:section', getContentBySection);
+router.get("/admin/content/:section", authenticateAdmin, getContentBySection);
 
 // Create or update content
-router.post('/admin/content', createOrUpdateContent);
-router.put('/admin/content', createOrUpdateContent); // Optional alias for POST
+router.post("/admin/content", authenticateAdmin, createOrUpdateContent);
+router.put("/admin/content", authenticateAdmin, createOrUpdateContent); // Optional alias for POST
 
 // Delete content by ID
-router.delete('/admin/content/:id', deleteContent);
+router.delete("/admin/content/:id", authenticateAdmin, deleteContent);
 
 export default router;

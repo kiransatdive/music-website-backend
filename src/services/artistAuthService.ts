@@ -1,15 +1,15 @@
-import bcrypt from 'bcryptjs';
-import { randomInt } from 'crypto';
-import jwt from 'jsonwebtoken';
-import type { SignOptions } from 'jsonwebtoken';
-import Artist from '../models/Artist.js';
-import type { ArtistAttributes } from '../models/Artist.js';
-import { sendOtpEmail } from './emailService.js';
-import type { OtpEmailPurpose } from './emailService.js';
+import bcrypt from "bcryptjs";
+import { randomInt } from "crypto";
+import jwt from "jsonwebtoken";
+import type { SignOptions } from "jsonwebtoken";
+import Artist from "../models/Artist.js";
+import type { ArtistAttributes } from "../models/Artist.js";
+import { sendOtpEmail } from "./emailService.js";
+import type { OtpEmailPurpose } from "./emailService.js";
 
-const ARTIST_ROLE = 'artist';
+const ARTIST_ROLE = "artist";
 const BCRYPT_SALT_ROUNDS = 12;
-const DEFAULT_JWT_EXPIRES_IN = '7d';
+const DEFAULT_JWT_EXPIRES_IN = "7d";
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 type ArtistTokenPayload = {
@@ -57,16 +57,16 @@ type EditArtistProfileInput = {
 
 type EditableArtistProfileFields = Pick<
   ArtistAttributes,
-  | 'bio'
-  | 'genre'
-  | 'profileImage'
-  | 'socialLinks'
-  | 'accountHolderName'
-  | 'bankName'
-  | 'accountNumber'
-  | 'ifscCode'
-  | 'branchName'
-  | 'upiId'
+  | "bio"
+  | "genre"
+  | "profileImage"
+  | "socialLinks"
+  | "accountHolderName"
+  | "bankName"
+  | "accountNumber"
+  | "ifscCode"
+  | "branchName"
+  | "upiId"
 >;
 
 export class ServiceError extends Error {
@@ -74,7 +74,7 @@ export class ServiceError extends Error {
 
   constructor(message: string, statusCode: number) {
     super(message);
-    this.name = 'ServiceError';
+    this.name = "ServiceError";
     this.statusCode = statusCode;
   }
 }
@@ -82,11 +82,11 @@ export class ServiceError extends Error {
 function getJwtSecret(): string {
   const secret = process.env.JWT_SECRET;
 
-  if (!secret && process.env.NODE_ENV === 'production') {
-    throw new ServiceError('JWT_SECRET is required in production', 500);
+  if (!secret && process.env.NODE_ENV === "production") {
+    throw new ServiceError("JWT_SECRET is required in production", 500);
   }
 
-  return secret ?? 'music_backend_secret';
+  return secret ?? "music_backend_secret";
 }
 
 function normalizeEmail(email: string): string {
@@ -95,7 +95,7 @@ function normalizeEmail(email: string): string {
 
 function assertValidEmail(email: string): void {
   if (!EMAIL_PATTERN.test(email)) {
-    throw new ServiceError('Invalid email address', 400);
+    throw new ServiceError("Invalid email address", 400);
   }
 }
 
@@ -131,7 +131,7 @@ async function generateAndSendArtistOtp(
   } catch {
     artist.otp = previousOtp;
     await artist.save();
-    throw new ServiceError('Unable to send OTP email. Please try again.', 502);
+    throw new ServiceError("Unable to send OTP email. Please try again.", 502);
   }
 
   return {};
@@ -140,7 +140,7 @@ async function generateAndSendArtistOtp(
 function signArtistToken(artist: Artist): string {
   const expiresIn = (process.env.JWT_EXPIRES_IN ??
     process.env.JWT_EXPIRE ??
-    DEFAULT_JWT_EXPIRES_IN) as SignOptions['expiresIn'];
+    DEFAULT_JWT_EXPIRES_IN) as SignOptions["expiresIn"];
   const payload: ArtistTokenPayload = {
     id: artist.id,
     email: artist.email,
@@ -153,18 +153,18 @@ function signArtistToken(artist: Artist): string {
 }
 
 function hasValue(value: unknown): boolean {
-  if (typeof value === 'string') {
+  if (typeof value === "string") {
     return value.trim().length > 0;
   }
 
-  if (typeof value === 'object' && value !== null) {
+  if (typeof value === "object" && value !== null) {
     return Object.keys(value).length > 0;
   }
 
   return value !== undefined && value !== null;
 }
 
-function getProfileStatus(artist: Artist): 'complete' | 'pending' {
+function getProfileStatus(artist: Artist): "complete" | "pending" {
   const requiredProfileFields = [
     artist.bio,
     artist.genre,
@@ -178,7 +178,7 @@ function getProfileStatus(artist: Artist): 'complete' | 'pending' {
     artist.upiId,
   ];
 
-  return requiredProfileFields.every(hasValue) ? 'complete' : 'pending';
+  return requiredProfileFields.every(hasValue) ? "complete" : "pending";
 }
 
 function artistResponse(artist: Artist) {
@@ -220,7 +220,7 @@ export async function registerArtistService(input: RegisterArtistInput) {
   const existingArtist = await findArtistByEmail(normalizedEmail);
 
   if (existingArtist) {
-    throw new ServiceError('Artist with this email already exists', 409);
+    throw new ServiceError("Artist with this email already exists", 409);
   }
 
   const existingPhone = await Artist.findOne({
@@ -228,7 +228,7 @@ export async function registerArtistService(input: RegisterArtistInput) {
   });
 
   if (existingPhone) {
-    throw new ServiceError('Artist with this phone already exists', 409);
+    throw new ServiceError("Artist with this phone already exists", 409);
   }
 
   const hashedPassword = await bcrypt.hash(input.password, BCRYPT_SALT_ROUNDS);
@@ -246,10 +246,13 @@ export async function registerArtistService(input: RegisterArtistInput) {
   });
 
   try {
-    await sendOtpEmail(artist.email, otp, 'email verification');
+    await sendOtpEmail(artist.email, otp, "email verification");
   } catch {
     await artist.destroy();
-    throw new ServiceError('Unable to send verification email. Please try again.', 502);
+    throw new ServiceError(
+      "Unable to send verification email. Please try again.",
+      502,
+    );
   }
 
   return {
@@ -261,7 +264,7 @@ export function verifyArtistToken(token: string): ArtistTokenPayload {
   try {
     return jwt.verify(token, getJwtSecret()) as ArtistTokenPayload;
   } catch {
-    throw new ServiceError('Invalid or expired token', 401);
+    throw new ServiceError("Invalid or expired token", 401);
   }
 }
 
@@ -269,7 +272,7 @@ export async function getArtistProfileService(artistId: number) {
   const artist = await Artist.findByPk(artistId);
 
   if (!artist) {
-    throw new ServiceError('Artist not found', 404);
+    throw new ServiceError("Artist not found", 404);
   }
 
   return {
@@ -281,7 +284,7 @@ export async function verifyArtistOtpService(input: OtpInput) {
   const artist = await findArtistByEmail(input.email);
 
   if (!artist || artist.otp !== input.otp) {
-    throw new ServiceError('Invalid email or OTP', 400);
+    throw new ServiceError("Invalid email or OTP", 400);
   }
 
   artist.isVerified = true;
@@ -298,27 +301,27 @@ export async function resendArtistOtpService(email: string) {
   const artist = await findArtistByEmail(email);
 
   if (!artist) {
-    throw new ServiceError('Artist not found', 404);
+    throw new ServiceError("Artist not found", 404);
   }
 
-  return generateAndSendArtistOtp(artist, 'email verification');
+  return generateAndSendArtistOtp(artist, "email verification");
 }
 
 export async function loginArtistService(input: LoginArtistInput) {
   const artist = await findArtistByEmail(input.email);
 
   if (!artist) {
-    throw new ServiceError('Invalid email or password', 401);
+    throw new ServiceError("Invalid email or password", 401);
   }
 
   const isPasswordValid = await bcrypt.compare(input.password, artist.password);
 
   if (!isPasswordValid) {
-    throw new ServiceError('Invalid email or password', 401);
+    throw new ServiceError("Invalid email or password", 401);
   }
 
   if (!artist.isVerified) {
-    throw new ServiceError('Please verify your email before login', 403);
+    throw new ServiceError("Please verify your email before login", 403);
   }
 
   return {
@@ -334,14 +337,14 @@ export async function forgotArtistPasswordService(email: string) {
     return {};
   }
 
-  return generateAndSendArtistOtp(artist, 'password reset');
+  return generateAndSendArtistOtp(artist, "password reset");
 }
 
 export async function resetArtistPasswordService(input: ResetPasswordInput) {
   const artist = await findArtistByEmail(input.email);
 
   if (!artist || artist.otp !== input.otp) {
-    throw new ServiceError('Invalid email or OTP', 400);
+    throw new ServiceError("Invalid email or OTP", 400);
   }
 
   artist.password = await bcrypt.hash(input.password, BCRYPT_SALT_ROUNDS);
@@ -353,21 +356,21 @@ export async function editArtistProfileService(input: EditArtistProfileInput) {
   const artist = await Artist.findByPk(input.artistId);
 
   if (!artist) {
-    throw new ServiceError('Artist not found', 404);
+    throw new ServiceError("Artist not found", 404);
   }
 
   const updates: Partial<EditableArtistProfileFields> = {};
 
-  assignIfDefined(updates, 'bio', input.bio);
-  assignIfDefined(updates, 'genre', input.genre);
-  assignIfDefined(updates, 'profileImage', input.profileImage);
-  assignIfDefined(updates, 'socialLinks', input.socialLinks);
-  assignIfDefined(updates, 'accountHolderName', input.accountHolderName);
-  assignIfDefined(updates, 'bankName', input.bankName);
-  assignIfDefined(updates, 'accountNumber', input.accountNumber);
-  assignIfDefined(updates, 'ifscCode', input.ifscCode);
-  assignIfDefined(updates, 'branchName', input.branchName);
-  assignIfDefined(updates, 'upiId', input.upiId);
+  assignIfDefined(updates, "bio", input.bio);
+  assignIfDefined(updates, "genre", input.genre);
+  assignIfDefined(updates, "profileImage", input.profileImage);
+  assignIfDefined(updates, "socialLinks", input.socialLinks);
+  assignIfDefined(updates, "accountHolderName", input.accountHolderName);
+  assignIfDefined(updates, "bankName", input.bankName);
+  assignIfDefined(updates, "accountNumber", input.accountNumber);
+  assignIfDefined(updates, "ifscCode", input.ifscCode);
+  assignIfDefined(updates, "branchName", input.branchName);
+  assignIfDefined(updates, "upiId", input.upiId);
 
   await artist.update(updates);
 

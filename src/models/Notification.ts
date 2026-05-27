@@ -1,6 +1,6 @@
-import { DataTypes, Model, Optional } from 'sequelize';
-import sequelize from '../config/database.js';
-import Artist from './Artist.js';
+import { DataTypes, Model, Optional } from "sequelize";
+import sequelize from "../config/database.js";
+import Artist from "./Artist.js";
 
 export interface NotificationAttributes {
   id: number;
@@ -13,12 +13,15 @@ export interface NotificationAttributes {
   updatedAt?: Date;
 }
 
-export interface NotificationCreationAttributes
-  extends Optional<NotificationAttributes, 'id' | 'isRead'> { }
+export interface NotificationCreationAttributes extends Optional<
+  NotificationAttributes,
+  "id" | "isRead"
+> {}
 
 class Notification
   extends Model<NotificationAttributes, NotificationCreationAttributes>
-  implements NotificationAttributes {
+  implements NotificationAttributes
+{
   public id!: number;
   public artistId!: number;
   public title!: string;
@@ -40,10 +43,10 @@ Notification.init(
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
       references: {
-        model: 'artists',
-        key: 'id',
+        model: "artists",
+        key: "id",
       },
-      onDelete: 'CASCADE',
+      onDelete: "CASCADE",
     },
     title: {
       type: DataTypes.STRING,
@@ -56,7 +59,7 @@ Notification.init(
     type: {
       type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: 'general',
+      defaultValue: "general",
     },
     isRead: {
       type: DataTypes.BOOLEAN,
@@ -66,15 +69,15 @@ Notification.init(
   },
   {
     sequelize,
-    modelName: 'Notification',
-    tableName: 'Notifications',
+    modelName: "Notification",
+    tableName: "Notifications",
     timestamps: true,
-  }
+  },
 );
 
 Notification.belongsTo(Artist, {
-  foreignKey: 'artistId',
-  as: 'artist',
+  foreignKey: "artistId",
+  as: "artist",
 });
 
 export default Notification;

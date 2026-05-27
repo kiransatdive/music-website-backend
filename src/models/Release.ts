@@ -1,6 +1,6 @@
-import { DataTypes, Model, Optional } from 'sequelize';
-import sequelize from '../config/database.js';
-import Artist from './Artist.js';
+import { DataTypes, Model, Optional } from "sequelize";
+import sequelize from "../config/database.js";
+import Artist from "./Artist.js";
 
 // Attribute Interfaces
 
@@ -11,20 +11,32 @@ export interface ReleaseAttributes {
   genre: string;
   language: string;
   releaseDate: Date;
-  releaseType: 'single' | 'ep' | 'album';
+  releaseType: "single" | "ep" | "album";
   labelName: string;
   upc?: string;
   artwork?: string;
-  status: 'draft' | 'uploaded' | 'pending_review' | 'approved' | 'rejected' | 'distributed' | 'live' | 'taken_down';
+  status:
+  | "draft"
+  | "uploaded"
+  | "pending_review"
+  | "approved"
+  | "rejected"
+  | "distributed"
+  | "live"
+  | "taken_down";
   rejectionReason?: string;
+  externalLinks?: string[];
+  youtubeCriteriaIds?: number[];
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-export interface ReleaseCreationAttributes
-  extends Optional<ReleaseAttributes, 'id' | 'status'> { }
+export interface ReleaseCreationAttributes extends Optional<
+  ReleaseAttributes,
+  "id" | "status"
+> { }
 
-// Release Model 
+// Release Model
 
 class Release
   extends Model<ReleaseAttributes, ReleaseCreationAttributes>
@@ -35,12 +47,22 @@ class Release
   public genre!: string;
   public language!: string;
   public releaseDate!: Date;
-  public releaseType!: 'single' | 'ep' | 'album';
+  public releaseType!: "single" | "ep" | "album";
   public labelName!: string;
   public upc?: string;
   public artwork?: string;
-  public status!: 'draft' | 'uploaded' | 'pending_review' | 'approved' | 'rejected' | 'distributed' | 'live' | 'taken_down';
+  public status!:
+    | "draft"
+    | "uploaded"
+    | "pending_review"
+    | "approved"
+    | "rejected"
+    | "distributed"
+    | "live"
+    | "taken_down";
   public rejectionReason?: string;
+  public externalLinks?: string[];
+  public youtubeCriteriaIds?: number[];
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
@@ -56,8 +78,8 @@ Release.init(
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
       references: {
-        model: 'Artists',
-        key: 'id',
+        model: "Artists",
+        key: "id",
       },
     },
     title: {
@@ -77,7 +99,7 @@ Release.init(
       allowNull: false,
     },
     releaseType: {
-      type: DataTypes.ENUM('single', 'ep', 'album'),
+      type: DataTypes.ENUM("single", "ep", "album"),
       allowNull: false,
     },
     labelName: {
@@ -93,28 +115,45 @@ Release.init(
       allowNull: true,
     },
     status: {
-      type: DataTypes.ENUM('draft', 'uploaded', 'pending_review', 'approved', 'rejected', 'distributed', 'live', 'taken_down'),
+      type: DataTypes.ENUM(
+        "draft",
+        "uploaded",
+        "pending_review",
+        "approved",
+        "rejected",
+        "distributed",
+        "live",
+        "taken_down",
+      ),
       allowNull: false,
-      defaultValue: 'draft',
+      defaultValue: "draft",
     },
     rejectionReason: {
       type: DataTypes.TEXT,
       allowNull: true,
     },
+    externalLinks: {
+      type: DataTypes.JSON,
+      allowNull: true,
+    },
+    youtubeCriteriaIds: {
+      type: DataTypes.JSON,
+      allowNull: true,
+    },
   },
   {
     sequelize,
-    modelName: 'Release',
-    tableName: 'Releases',
+    modelName: "Release",
+    tableName: "Releases",
     timestamps: true,
-  }
+  },
 );
 
-// Associations 
+// Associations
 
 Release.belongsTo(Artist, {
-  foreignKey: 'artistId',
-  as: 'artist',
+  foreignKey: "artistId",
+  as: "artist",
 });
 
 export default Release;

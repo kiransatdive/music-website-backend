@@ -1,34 +1,34 @@
-import Track from '../models/Track.js';
-import Release from '../models/Release.js';
-import { extractAudioMetadata } from '../utils/mediaProcessing.js';
-import type { UploadTrackInput } from '../utils/releaseValidation.js';
+import Track from "../models/Track.js";
+import Release from "../models/Release.js";
+import { extractAudioMetadata } from "../utils/mediaProcessing.js";
+import type { UploadTrackInput } from "../utils/releaseValidation.js";
 
-//  Custom Service Error 
+//  Custom Service Error
 
 export class TrackServiceError extends Error {
   public statusCode: number;
 
   constructor(message: string, statusCode: number) {
     super(message);
-    this.name = 'TrackServiceError';
+    this.name = "TrackServiceError";
     this.statusCode = statusCode;
   }
 }
 
-// Track Service 
+// Track Service
 
 export class TrackService {
   //  Upload and create a track
   async uploadTrack(
     releaseId: number,
     audioFilePath: string,
-    data: UploadTrackInput
+    data: UploadTrackInput,
   ): Promise<Track> {
     try {
       // Verify release exists
       const release = await Release.findByPk(releaseId);
       if (!release) {
-        throw new TrackServiceError('Release not found', 404);
+        throw new TrackServiceError("Release not found", 404);
       }
 
       // Extract audio metadata
@@ -46,8 +46,8 @@ export class TrackService {
       });
 
       // Update release status if in draft
-      if (release.status === 'draft') {
-        await release.update({ status: 'uploaded' });
+      if (release.status === "draft") {
+        await release.update({ status: "uploaded" });
       }
 
       return track;
@@ -56,8 +56,8 @@ export class TrackService {
         throw error;
       }
       throw new TrackServiceError(
-        error instanceof Error ? error.message : 'Failed to upload track',
-        500
+        error instanceof Error ? error.message : "Failed to upload track",
+        500,
       );
     }
   }
@@ -68,8 +68,8 @@ export class TrackService {
       include: [
         {
           model: Release,
-          as: 'release',
-          attributes: ['id', 'title', 'artistId'],
+          as: "release",
+          attributes: ["id", "title", "artistId"],
         },
       ],
     });
@@ -79,18 +79,18 @@ export class TrackService {
   async getTracksByReleaseId(releaseId: number): Promise<Track[]> {
     return Track.findAll({
       where: { releaseId },
-      order: [['createdAt', 'ASC']],
+      order: [["createdAt", "ASC"]],
     });
   }
 
   // Update track details
   async updateTrack(
     trackId: number,
-    data: Partial<UploadTrackInput>
+    data: Partial<UploadTrackInput>,
   ): Promise<Track> {
     const track = await this.getTrackById(trackId);
     if (!track) {
-      throw new TrackServiceError('Track not found', 404);
+      throw new TrackServiceError("Track not found", 404);
     }
 
     await track.update(data);
@@ -101,7 +101,7 @@ export class TrackService {
   async deleteTrack(trackId: number): Promise<void> {
     const track = await Track.findByPk(trackId);
     if (!track) {
-      throw new TrackServiceError('Track not found', 404);
+      throw new TrackServiceError("Track not found", 404);
     }
 
     await track.destroy();

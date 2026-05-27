@@ -1,6 +1,6 @@
-import nodemailer from 'nodemailer';
+import nodemailer from "nodemailer";
 
-export type OtpEmailPurpose = 'email verification' | 'password reset';
+export type OtpEmailPurpose = "email verification" | "password reset";
 
 function getRequiredEnv(name: string): string {
   const value = process.env[name];
@@ -14,12 +14,12 @@ function getRequiredEnv(name: string): string {
 
 function createTransporter() {
   return nodemailer.createTransport({
-    host: process.env.SMTP_HOST ?? 'smtp.gmail.com',
-    port: parseInt(process.env.SMTP_PORT ?? '587', 10),
-    secure: process.env.SMTP_SECURE === 'true',
+    host: process.env.SMTP_HOST ?? "smtp.gmail.com",
+    port: parseInt(process.env.SMTP_PORT ?? "587", 10),
+    secure: process.env.SMTP_SECURE === "true",
     auth: {
-      user: getRequiredEnv('SMTP_EMAIL'),
-      pass: getRequiredEnv('SMTP_PASSWORD'),
+      user: getRequiredEnv("SMTP_EMAIL"),
+      pass: getRequiredEnv("SMTP_PASSWORD"),
     },
   });
 }
@@ -29,12 +29,12 @@ export async function sendOtpEmail(
   otp: string,
   purpose: OtpEmailPurpose,
 ) {
-  const fromEmail = getRequiredEnv('SMTP_EMAIL');
+  const fromEmail = getRequiredEnv("SMTP_EMAIL");
   const transporter = createTransporter();
   const subject =
-    purpose === 'password reset'
-      ? 'Your password reset OTP'
-      : 'Your email verification OTP';
+    purpose === "password reset"
+      ? "Your password reset OTP"
+      : "Your email verification OTP";
 
   await transporter.sendMail({
     from: process.env.MAIL_FROM ?? `"Music Backend" <${fromEmail}>`,
@@ -56,22 +56,22 @@ export async function sendStatusChangeEmail(
   to: string,
   releaseTitle: string,
   newStatus: string,
-  reason?: string
+  reason?: string,
 ) {
-  const fromEmail = getRequiredEnv('SMTP_EMAIL');
+  const fromEmail = getRequiredEnv("SMTP_EMAIL");
   const transporter = createTransporter();
   const subject = `Update on your release: ${releaseTitle}`;
 
   let statusMessage = `The status of your release "<strong>${releaseTitle}</strong>" has been updated to: <strong>${newStatus}</strong>.`;
-  let reasonMessage = reason ? `<p><strong>Reason:</strong> ${reason}</p>` : '';
+  let reasonMessage = reason ? `<p><strong>Reason:</strong> ${reason}</p>` : "";
 
-  if (newStatus === 'rejected') {
+  if (newStatus === "rejected") {
     statusMessage = `Unfortunately, your release "<strong>${releaseTitle}</strong>" has been <strong>rejected</strong>.`;
-  } else if (newStatus === 'live') {
+  } else if (newStatus === "live") {
     statusMessage = `Great news! Your release "<strong>${releaseTitle}</strong>" is now distributed and <strong>live on platforms</strong>.`;
-  } else if (newStatus === 'taken_down') {
+  } else if (newStatus === "taken_down") {
     statusMessage = `Your release "<strong>${releaseTitle}</strong>" has been <strong>taken down</strong>.`;
-  } else if (newStatus === 'approved') {
+  } else if (newStatus === "approved") {
     statusMessage = `Your release "<strong>${releaseTitle}</strong>" has been <strong>approved</strong> and will be distributed shortly.`;
   }
 
@@ -93,9 +93,9 @@ export async function sendStatusChangeEmail(
 export async function sendNotificationEmail(
   to: string,
   title: string,
-  message: string
+  message: string,
 ) {
-  const fromEmail = getRequiredEnv('SMTP_EMAIL');
+  const fromEmail = getRequiredEnv("SMTP_EMAIL");
   const transporter = createTransporter();
 
   await transporter.sendMail({

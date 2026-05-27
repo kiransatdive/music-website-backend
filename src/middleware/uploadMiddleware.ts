@@ -1,14 +1,20 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import multer from 'multer';
-import { Request } from 'express';
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import multer from "multer";
+import { Request } from "express";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const profileImageDir = path.join(__dirname, '..', '..', 'uploads', 'profile-images');
+const profileImageDir = path.join(
+  __dirname,
+  "..",
+  "..",
+  "uploads",
+  "profile-images",
+);
 
-const imageMimeTypes = new Set(['image/jpeg', 'image/png', 'image/webp']);
+const imageMimeTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
 
 const storage = multer.diskStorage({
   destination: (_req, _file, callback) => {
@@ -36,7 +42,7 @@ export const uploadProfileImage = multer({
     callback: multer.FileFilterCallback,
   ) => {
     if (!imageMimeTypes.has(file.mimetype)) {
-      return callback(new Error('Only JPG, PNG and WEBP images are allowed'));
+      return callback(new Error("Only JPG, PNG and WEBP images are allowed"));
     }
 
     return callback(null, true);

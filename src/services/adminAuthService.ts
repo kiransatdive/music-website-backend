@@ -1,12 +1,12 @@
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import type { SignOptions } from 'jsonwebtoken';
-import Admin from '../models/Admin.js';
-import { ServiceError } from './artistAuthService.js';
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import type { SignOptions } from "jsonwebtoken";
+import Admin from "../models/Admin.js";
+import { ServiceError } from "./artistAuthService.js";
 
-const ADMIN_ROLE = 'admin';
+const ADMIN_ROLE = "admin";
 const BCRYPT_SALT_ROUNDS = 12;
-const DEFAULT_JWT_EXPIRES_IN = '7d';
+const DEFAULT_JWT_EXPIRES_IN = "7d";
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 type AdminTokenPayload = {
@@ -23,11 +23,11 @@ type AdminLoginInput = {
 function getJwtSecret(): string {
   const secret = process.env.JWT_SECRET;
 
-  if (!secret && process.env.NODE_ENV === 'production') {
-    throw new ServiceError('JWT_SECRET is required in production', 500);
+  if (!secret && process.env.NODE_ENV === "production") {
+    throw new ServiceError("JWT_SECRET is required in production", 500);
   }
 
-  return secret ?? 'music_backend_secret';
+  return secret ?? "music_backend_secret";
 }
 
 function normalizeEmail(email: string): string {
@@ -36,7 +36,7 @@ function normalizeEmail(email: string): string {
 
 function assertValidEmail(email: string): void {
   if (!EMAIL_PATTERN.test(email)) {
-    throw new ServiceError('Invalid email address', 400);
+    throw new ServiceError("Invalid email address", 400);
   }
 }
 
@@ -51,7 +51,7 @@ function adminResponse(admin: Admin) {
 function signAdminToken(admin: Admin): string {
   const expiresIn = (process.env.JWT_EXPIRES_IN ??
     process.env.JWT_EXPIRE ??
-    DEFAULT_JWT_EXPIRES_IN) as SignOptions['expiresIn'];
+    DEFAULT_JWT_EXPIRES_IN) as SignOptions["expiresIn"];
 
   return jwt.sign(
     {
@@ -69,7 +69,7 @@ export function verifyAdminToken(token: string): AdminTokenPayload {
     const payload = jwt.verify(token, getJwtSecret()) as AdminTokenPayload;
 
     if (payload.role !== ADMIN_ROLE) {
-      throw new ServiceError('Admin access only', 403);
+      throw new ServiceError("Admin access only", 403);
     }
 
     return payload;
@@ -78,7 +78,7 @@ export function verifyAdminToken(token: string): AdminTokenPayload {
       throw error;
     }
 
-    throw new ServiceError('Invalid or expired token', 401);
+    throw new ServiceError("Invalid or expired token", 401);
   }
 }
 
@@ -87,7 +87,7 @@ export async function seedDefaultAdmin(): Promise<void> {
   const adminPassword = process.env.ADMIN_PASSWORD;
 
   if (!adminEmail || !adminPassword) {
-    throw new ServiceError('ADMIN_EMAIL and ADMIN_PASSWORD are required', 500);
+    throw new ServiceError("ADMIN_EMAIL and ADMIN_PASSWORD are required", 500);
   }
 
   const email = normalizeEmail(adminEmail);
@@ -117,13 +117,13 @@ export async function loginAdminService(input: AdminLoginInput) {
   const admin = await Admin.findOne({ where: { email } });
 
   if (!admin) {
-    throw new ServiceError('Invalid email or password', 401);
+    throw new ServiceError("Invalid email or password", 401);
   }
 
   const isPasswordValid = await bcrypt.compare(input.password, admin.password);
 
   if (!isPasswordValid) {
-    throw new ServiceError('Invalid email or password', 401);
+    throw new ServiceError("Invalid email or password", 401);
   }
 
   return {

@@ -1,5 +1,5 @@
-import { DataTypes, Model, Optional } from 'sequelize';
-import sequelize from '../config/database.js';
+import { DataTypes, Model, Optional } from "sequelize";
+import sequelize from "../config/database.js";
 
 // Attribute Interfaces
 
@@ -11,14 +11,17 @@ export interface PlatformAttributes {
   updatedAt?: Date;
 }
 
-export interface PlatformCreationAttributes
-  extends Optional<PlatformAttributes, 'id'> { }
+export interface PlatformCreationAttributes extends Optional<
+  PlatformAttributes,
+  "id"
+> {}
 
-// Platform Model 
+// Platform Model
 
 class Platform
   extends Model<PlatformAttributes, PlatformCreationAttributes>
-  implements PlatformAttributes {
+  implements PlatformAttributes
+{
   public id!: number;
   public name!: string;
   public isActive!: boolean;
@@ -46,10 +49,10 @@ Platform.init(
   },
   {
     sequelize,
-    modelName: 'Platform',
-    tableName: 'Platforms',
+    modelName: "Platform",
+    tableName: "Platforms",
     timestamps: true,
-  }
+  },
 );
 
 export default Platform;

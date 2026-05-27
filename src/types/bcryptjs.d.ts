@@ -1,4 +1,4 @@
-declare module 'bcryptjs' {
+declare module "bcryptjs" {
   export function hash(
     data: string,
     saltOrRounds: string | number,
@@ -7,7 +7,7 @@ declare module 'bcryptjs' {
   export function compare(data: string, encrypted: string): Promise<boolean>;
 }
 
-declare module 'fluent-ffmpeg' {
+declare module "fluent-ffmpeg" {
   interface FFProbeStream {
     codec_name?: string;
     bit_rate?: number | string;
@@ -26,7 +26,7 @@ declare module 'fluent-ffmpeg' {
   namespace ffmpeg {
     function ffprobe(
       filePath: string,
-      callback: (err: Error | null, metadata: FFProbeData) => void
+      callback: (err: Error | null, metadata: FFProbeData) => void,
     ): void;
     function setFfprobePath(path: string): void;
     function setFfmpegPath(path: string): void;

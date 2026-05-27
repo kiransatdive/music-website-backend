@@ -1,33 +1,36 @@
 // Model Imports
 // This file ensures all models are imported and registered with Sequelize
 
-import Admin from './Admin.js';
-import Artist from './Artist.js';
-import Release from './Release.js';
-import Track from './Track.js';
-import Platform from './Platform.js';
-import ReleasePlatform from './ReleasePlatform.js';
-import Notification from './Notification.js';
-import SiteContent from './SiteContent.js';
+import Admin from "./Admin.js";
+import Artist from "./Artist.js";
+import Release from "./Release.js";
+import Track from "./Track.js";
+import Platform from "./Platform.js";
+import ReleasePlatform from "./ReleasePlatform.js";
+import Notification from "./Notification.js";
+import SiteContent from "./SiteContent.js";
+import PricingPlan from "./PricingPlan.js";
+import WhitelistDomain from "./WhitelistDomain.js";
+import YoutubeCriteria from "./YoutubeCriteria.js";
 
 // Define relationships here to avoid circular dependency issues
 
 // Artist has many Releases
 Artist.hasMany(Release, {
-  foreignKey: 'artistId',
-  as: 'releases',
+  foreignKey: "artistId",
+  as: "releases",
 });
 
 // Artist has many Notifications
 Artist.hasMany(Notification, {
-  foreignKey: 'artistId',
-  as: 'notifications',
+  foreignKey: "artistId",
+  as: "notifications",
 });
 
 // Release has many Tracks
 Release.hasMany(Track, {
-  foreignKey: 'releaseId',
-  as: 'tracks',
+  foreignKey: "releaseId",
+  as: "tracks",
 });
 
 // Artist has many Releases (already defined above, but kept for clarity)
@@ -54,4 +57,7 @@ export {
   ReleasePlatform,
   Notification,
   SiteContent,
+  PricingPlan,
+  WhitelistDomain,
+  YoutubeCriteria,
 };

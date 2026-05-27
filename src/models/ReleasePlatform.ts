@@ -1,7 +1,7 @@
-import { DataTypes, Model } from 'sequelize';
-import sequelize from '../config/database.js';
-import Release from './Release.js';
-import Platform from './Platform.js';
+import { DataTypes, Model } from "sequelize";
+import sequelize from "../config/database.js";
+import Release from "./Release.js";
+import Platform from "./Platform.js";
 
 // Attribute Interfaces
 
@@ -12,11 +12,12 @@ export interface ReleasePlatformAttributes {
   updatedAt?: Date;
 }
 
-// ReleasePlatform Model 
+// ReleasePlatform Model
 
 class ReleasePlatform
   extends Model<ReleasePlatformAttributes>
-  implements ReleasePlatformAttributes {
+  implements ReleasePlatformAttributes
+{
   public releaseId!: number;
   public platformId!: number;
   public readonly createdAt!: Date;
@@ -29,43 +30,43 @@ ReleasePlatform.init(
       type: DataTypes.INTEGER.UNSIGNED,
       primaryKey: true,
       references: {
-        model: 'Releases',
-        key: 'id',
+        model: "Releases",
+        key: "id",
       },
-      onDelete: 'CASCADE',
+      onDelete: "CASCADE",
     },
     platformId: {
       type: DataTypes.INTEGER.UNSIGNED,
       primaryKey: true,
       references: {
-        model: 'Platforms',
-        key: 'id',
+        model: "Platforms",
+        key: "id",
       },
-      onDelete: 'CASCADE',
+      onDelete: "CASCADE",
     },
   },
   {
     sequelize,
-    modelName: 'ReleasePlatform',
-    tableName: 'ReleasePlatforms',
+    modelName: "ReleasePlatform",
+    tableName: "ReleasePlatforms",
     timestamps: true,
-  }
+  },
 );
 
-// Associations 
+// Associations
 
 Release.belongsToMany(Platform, {
   through: ReleasePlatform,
-  foreignKey: 'releaseId',
-  otherKey: 'platformId',
-  as: 'platforms',
+  foreignKey: "releaseId",
+  otherKey: "platformId",
+  as: "platforms",
 });
 
 Platform.belongsToMany(Release, {
   through: ReleasePlatform,
-  foreignKey: 'platformId',
-  otherKey: 'releaseId',
-  as: 'releases',
+  foreignKey: "platformId",
+  otherKey: "releaseId",
+  as: "releases",
 });
 
 export default ReleasePlatform;

@@ -1,21 +1,22 @@
-import { Request, Response } from 'express';
-import releaseService, { ReleaseServiceError } from '../services/releaseService.js';
-import trackService, { TrackServiceError } from '../services/trackService.js';
+import { Request, Response } from "express";
+import releaseService, {
+  ReleaseServiceError,
+} from "../services/releaseService.js";
+import trackService, { TrackServiceError } from "../services/trackService.js";
 import {
   createReleaseSchema,
   updateReleaseSchema,
   submitReleaseSchema,
   uploadTrackSchema,
-} from '../utils/releaseValidation.js';
+} from "../utils/releaseValidation.js";
 import {
   validateAudioFile,
   validateArtworkFile,
   extractImageMetadata,
   deleteFile,
-} from '../utils/mediaProcessing.js';
-import path from 'path';
-import type { ArtistRequest } from '../middleware/artistAuthMiddleware.js';
-
+} from "../utils/mediaProcessing.js";
+import path from "path";
+import type { ArtistRequest } from "../middleware/artistAuthMiddleware.js";
 
 export class ReleaseController {
   // Create a new release
@@ -23,7 +24,7 @@ export class ReleaseController {
     try {
       const artistId = (req as ArtistRequest).artist?.id;
       if (!artistId) {
-        res.status(401).json({ success: false, message: 'Unauthorized' });
+        res.status(401).json({ success: false, message: "Unauthorized" });
         return;
       }
 
@@ -32,24 +33,28 @@ export class ReleaseController {
       if (!validationResult.success) {
         res.status(400).json({
           success: false,
-          message: 'Validation failed',
+          message: "Validation failed",
           errors: validationResult.error.flatten(),
         });
         return;
       }
 
-      const release = await releaseService.createRelease(artistId, validationResult.data);
+      const release = await releaseService.createRelease(
+        artistId,
+        validationResult.data,
+      );
 
       res.status(201).json({
         success: true,
-        message: 'Release created successfully',
+        message: "Release created successfully",
         data: {
           id: release.id,
           status: release.status,
         },
       });
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Internal server error';
+      const message =
+        error instanceof Error ? error.message : "Internal server error";
       res.status(500).json({
         success: false,
         message,
@@ -65,13 +70,13 @@ export class ReleaseController {
 
       const release = await releaseService.getReleaseDetails(
         parseInt(id, 10),
-        artistId
+        artistId,
       );
 
       if (!release) {
         res.status(404).json({
           success: false,
-          message: 'Release not found',
+          message: "Release not found",
         });
         return;
       }
@@ -89,7 +94,8 @@ export class ReleaseController {
         return;
       }
 
-      const message = error instanceof Error ? error.message : 'Internal server error';
+      const message =
+        error instanceof Error ? error.message : "Internal server error";
       res.status(500).json({
         success: false,
         message,
@@ -102,18 +108,21 @@ export class ReleaseController {
     try {
       const artistId = (req as ArtistRequest).artist?.id;
       if (!artistId) {
-        res.status(401).json({ success: false, message: 'Unauthorized' });
+        res.status(401).json({ success: false, message: "Unauthorized" });
         return;
       }
 
-      const { status, limit = '10', offset = '0', search } = req.query;
+      const { status, limit = "10", offset = "0", search } = req.query;
 
-      const { rows, count } = await releaseService.getReleasesByArtistId(artistId, {
-        status: status as string | undefined,
-        limit: parseInt(limit as string, 10),
-        offset: parseInt(offset as string, 10),
-        search: search as string | undefined,
-      });
+      const { rows, count } = await releaseService.getReleasesByArtistId(
+        artistId,
+        {
+          status: status as string | undefined,
+          limit: parseInt(limit as string, 10),
+          offset: parseInt(offset as string, 10),
+          search: search as string | undefined,
+        },
+      );
 
       res.status(200).json({
         success: true,
@@ -125,7 +134,8 @@ export class ReleaseController {
         },
       });
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Internal server error';
+      const message =
+        error instanceof Error ? error.message : "Internal server error";
       res.status(500).json({
         success: false,
         message,
@@ -139,7 +149,7 @@ export class ReleaseController {
       const { id } = req.params;
       const artistId = (req as ArtistRequest).artist?.id;
       if (!artistId) {
-        res.status(401).json({ success: false, message: 'Unauthorized' });
+        res.status(401).json({ success: false, message: "Unauthorized" });
         return;
       }
 
@@ -148,7 +158,7 @@ export class ReleaseController {
       if (!validationResult.success) {
         res.status(400).json({
           success: false,
-          message: 'Validation failed',
+          message: "Validation failed",
           errors: validationResult.error.flatten(),
         });
         return;
@@ -157,12 +167,12 @@ export class ReleaseController {
       const release = await releaseService.updateRelease(
         parseInt(id, 10),
         artistId,
-        validationResult.data
+        validationResult.data,
       );
 
       res.status(200).json({
         success: true,
-        message: 'Release updated successfully',
+        message: "Release updated successfully",
         data: release,
       });
     } catch (error) {
@@ -174,7 +184,8 @@ export class ReleaseController {
         return;
       }
 
-      const message = error instanceof Error ? error.message : 'Internal server error';
+      const message =
+        error instanceof Error ? error.message : "Internal server error";
       res.status(500).json({
         success: false,
         message,
@@ -188,7 +199,7 @@ export class ReleaseController {
       const { id } = req.params;
       const artistId = (req as ArtistRequest).artist?.id;
       if (!artistId) {
-        res.status(401).json({ success: false, message: 'Unauthorized' });
+        res.status(401).json({ success: false, message: "Unauthorized" });
         return;
       }
 
@@ -196,7 +207,7 @@ export class ReleaseController {
 
       res.status(200).json({
         success: true,
-        message: 'Release deleted successfully',
+        message: "Release deleted successfully",
       });
     } catch (error) {
       if (error instanceof ReleaseServiceError) {
@@ -207,7 +218,8 @@ export class ReleaseController {
         return;
       }
 
-      const message = error instanceof Error ? error.message : 'Internal server error';
+      const message =
+        error instanceof Error ? error.message : "Internal server error";
       res.status(500).json({
         success: false,
         message,
@@ -221,14 +233,14 @@ export class ReleaseController {
       const { id } = req.params;
       const artistId = (req as ArtistRequest).artist?.id;
       if (!artistId) {
-        res.status(401).json({ success: false, message: 'Unauthorized' });
+        res.status(401).json({ success: false, message: "Unauthorized" });
         return;
       }
 
       if (!req.file) {
         res.status(400).json({
           success: false,
-          message: 'No audio file provided',
+          message: "No audio file provided",
         });
         return;
       }
@@ -250,23 +262,25 @@ export class ReleaseController {
         await deleteFile(req.file.path);
         res.status(400).json({
           success: false,
-          message: 'Validation failed',
+          message: "Validation failed",
           errors: validationResult.error.flatten(),
         });
         return;
       }
 
       // Verify release belongs to artist
-      const release = await releaseService.getReleaseById(parseInt(id, 10), artistId);
+      const release = await releaseService.getReleaseById(
+        parseInt(id, 10),
+        artistId,
+      );
       if (!release) {
         await deleteFile(req.file.path);
         res.status(404).json({
           success: false,
-          message: 'Release not found',
+          message: "Release not found",
         });
         return;
       }
-
       // Upload track
       const track = await trackService.uploadTrack(
         parseInt(id, 10),
@@ -276,7 +290,7 @@ export class ReleaseController {
 
       res.status(201).json({
         success: true,
-        message: 'Track uploaded successfully',
+        message: "Track uploaded successfully",
         data: {
           trackId: track.id,
           releaseId: track.releaseId,
@@ -295,7 +309,10 @@ export class ReleaseController {
         await deleteFile(req.file.path);
       }
 
-      if (error instanceof ReleaseServiceError || error instanceof TrackServiceError) {
+      if (
+        error instanceof ReleaseServiceError ||
+        error instanceof TrackServiceError
+      ) {
         res.status(error.statusCode).json({
           success: false,
           message: error.message,
@@ -303,7 +320,8 @@ export class ReleaseController {
         return;
       }
 
-      const message = error instanceof Error ? error.message : 'Internal server error';
+      const message =
+        error instanceof Error ? error.message : "Internal server error";
       res.status(500).json({
         success: false,
         message,
@@ -320,14 +338,14 @@ export class ReleaseController {
       const { id } = req.params;
       const artistId = (req as ArtistRequest).artist?.id;
       if (!artistId) {
-        res.status(401).json({ success: false, message: 'Unauthorized' });
+        res.status(401).json({ success: false, message: "Unauthorized" });
         return;
       }
 
       if (!req.file) {
         res.status(400).json({
           success: false,
-          message: 'No artwork file provided',
+          message: "No artwork file provided",
         });
         return;
       }
@@ -344,7 +362,11 @@ export class ReleaseController {
       }
 
       // Validate image dimensions
-      const imageValidation = await extractImageMetadata(req.file.path, 3000, 3000);
+      const imageValidation = await extractImageMetadata(
+        req.file.path,
+        3000,
+        3000,
+      );
       if (!imageValidation.valid) {
         await deleteFile(req.file.path);
         res.status(400).json({
@@ -355,27 +377,33 @@ export class ReleaseController {
       }
 
       // Verify release belongs to artist
-      const release = await releaseService.getReleaseById(parseInt(id, 10), artistId);
+      const release = await releaseService.getReleaseById(
+        parseInt(id, 10),
+        artistId,
+      );
       if (!release) {
         await deleteFile(req.file.path);
         res.status(404).json({
           success: false,
-          message: 'Release not found',
+          message: "Release not found",
         });
         return;
       }
 
       // Save artwork path
       const artwork = path.relative(
-        path.join(process.cwd(), 'uploads'),
-        req.file.path
+        path.join(process.cwd(), "uploads"),
+        req.file.path,
       );
 
       await releaseService.updateArtwork(parseInt(id, 10), artistId, artwork);
 
       res.status(201).json({
         success: true,
-        message: 'Artwork uploaded successfully',
+        message: "Artwork uploaded successfully",
+        data: {
+          artworkUrl: artwork,
+        },
       });
     } catch (error) {
       if (req.file) {
@@ -390,7 +418,8 @@ export class ReleaseController {
         return;
       }
 
-      const message = error instanceof Error ? error.message : 'Internal server error';
+      const message =
+        error instanceof Error ? error.message : "Internal server error";
       res.status(500).json({
         success: false,
         message,
@@ -407,7 +436,7 @@ export class ReleaseController {
       const { id } = req.params;
       const artistId = (req as ArtistRequest).artist?.id;
       if (!artistId) {
-        res.status(401).json({ success: false, message: 'Unauthorized' });
+        res.status(401).json({ success: false, message: "Unauthorized" });
         return;
       }
 
@@ -416,17 +445,21 @@ export class ReleaseController {
       if (!validationResult.success) {
         res.status(400).json({
           success: false,
-          message: 'Validation failed',
+          message: "Validation failed",
           errors: validationResult.error.flatten(),
         });
         return;
       }
 
-      const release = await releaseService.submitRelease(parseInt(id, 10), artistId);
+      const release = await releaseService.submitRelease(
+        parseInt(id, 10),
+        artistId,
+        validationResult.data.youtubeCriteriaIds,
+      );
 
       res.status(200).json({
         success: true,
-        message: 'Release submitted successfully',
+        message: "Release submitted successfully",
         data: {
           status: release.status,
         },
@@ -440,7 +473,8 @@ export class ReleaseController {
         return;
       }
 
-      const message = error instanceof Error ? error.message : 'Internal server error';
+      const message =
+        error instanceof Error ? error.message : "Internal server error";
       res.status(500).json({
         success: false,
         message,

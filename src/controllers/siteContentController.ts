@@ -1,33 +1,40 @@
-import { Request, Response } from 'express';
-import { SiteContent } from '../models/index.js';
+import { Request, Response } from "express";
+import { SiteContent } from "../models/index.js";
 
 export const getContentBySection = async (req: Request, res: Response) => {
   try {
     const { section } = req.params;
     const content = await SiteContent.findAll({
       where: { section, isActive: true },
-      order: [['createdAt', 'DESC']],
-      attributes: { exclude: ['key', 'isActive'] },
+      order: [["createdAt", "DESC"]],
+      attributes: { exclude: ["key", "isActive"] },
     });
 
     res.status(200).json({ success: true, data: content });
   } catch (error) {
-    console.error('Error fetching site content by section:', error);
-    res.status(500).json({ success: false, message: 'Failed to fetch content' });
+    console.error("Error fetching site content by section:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to fetch content" });
   }
 };
 
 export const getAllContent = async (req: Request, res: Response) => {
   try {
     const content = await SiteContent.findAll({
-      order: [['section', 'ASC'], ['createdAt', 'DESC']],
-      attributes: { exclude: ['key', 'isActive'] },
+      order: [
+        ["section", "ASC"],
+        ["createdAt", "DESC"],
+      ],
+      attributes: { exclude: ["key", "isActive"] },
     });
 
     res.status(200).json({ success: true, data: content });
   } catch (error) {
-    console.error('Error fetching all site content:', error);
-    res.status(500).json({ success: false, message: 'Failed to fetch content' });
+    console.error("Error fetching all site content:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to fetch content" });
   }
 };
 
@@ -36,7 +43,9 @@ export const createOrUpdateContent = async (req: Request, res: Response) => {
     const { section, key, content, isActive } = req.body;
 
     if (!section || !content) {
-      return res.status(400).json({ success: false, message: 'Section and content are required' });
+      return res
+        .status(400)
+        .json({ success: false, message: "Section and content are required" });
     }
 
     // Build the query to find existing content
@@ -58,7 +67,13 @@ export const createOrUpdateContent = async (req: Request, res: Response) => {
       delete responseData.key;
       delete responseData.isActive;
 
-      return res.status(200).json({ success: true, message: 'Content updated successfully', data: responseData });
+      return res
+        .status(200)
+        .json({
+          success: true,
+          message: "Content updated successfully",
+          data: responseData,
+        });
     }
 
     // Create new content
@@ -73,10 +88,16 @@ export const createOrUpdateContent = async (req: Request, res: Response) => {
     delete responseData.key;
     delete responseData.isActive;
 
-    res.status(201).json({ success: true, message: 'Content created successfully', data: responseData });
+    res
+      .status(201)
+      .json({
+        success: true,
+        message: "Content created successfully",
+        data: responseData,
+      });
   } catch (error) {
-    console.error('Error creating/updating site content:', error);
-    res.status(500).json({ success: false, message: 'Failed to save content' });
+    console.error("Error creating/updating site content:", error);
+    res.status(500).json({ success: false, message: "Failed to save content" });
   }
 };
 
@@ -86,13 +107,19 @@ export const deleteContent = async (req: Request, res: Response) => {
 
     const content = await SiteContent.findByPk(id);
     if (!content) {
-      return res.status(404).json({ success: false, message: 'Content not found' });
+      return res
+        .status(404)
+        .json({ success: false, message: "Content not found" });
     }
 
     await content.destroy();
-    res.status(200).json({ success: true, message: 'Content deleted successfully' });
+    res
+      .status(200)
+      .json({ success: true, message: "Content deleted successfully" });
   } catch (error) {
-    console.error('Error deleting site content:', error);
-    res.status(500).json({ success: false, message: 'Failed to delete content' });
+    console.error("Error deleting site content:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to delete content" });
   }
 };
