@@ -1,6 +1,7 @@
 import Notification from "../models/Notification.js";
 import Artist from "../models/Artist.js";
 import { sendNotificationEmail } from "./emailService.js";
+import { Op } from "sequelize";
 
 export class NotificationServiceError extends Error {
   public statusCode: number;
@@ -84,6 +85,41 @@ export class NotificationService {
       { isRead: true },
       { where: { artistId, isRead: false } },
     );
+  }
+
+  async deleteNotification(
+    notificationId: number,
+    artistId: number,
+  ): Promise<void> {
+    const notification = await Notification.findOne({
+      where: { id: notificationId, artistId },
+    });
+
+    if (!notification) {
+      throw new NotificationServiceError("Notification not found", 404);
+    }
+
+    await notification.destroy();
+  }
+
+  async bulkDeleteNotifications(
+    notificationIds: number[],
+    artistId: number,
+  ): Promise<number> {
+    if (!notificationIds || notificationIds.length === 0) {
+      throw new NotificationServiceError("No notification IDs provided", 400);
+    }
+
+    const deletedCount = await Notification.destroy({
+      where: {
+        id: {
+          [Op.in]: notificationIds,
+        },
+        artistId,
+      },
+    });
+
+    return deletedCount;
   }
 }
 

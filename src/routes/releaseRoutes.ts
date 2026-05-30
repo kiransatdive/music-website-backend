@@ -25,6 +25,13 @@ router.get(
   releaseController.getReleases.bind(releaseController),
 );
 
+// Get release counts/stats for artist
+router.get(
+  "/releases/stats",
+  authenticateArtist,
+  releaseController.getReleaseStats.bind(releaseController),
+);
+
 // Get release details
 router.get(
   "/releases/:id",

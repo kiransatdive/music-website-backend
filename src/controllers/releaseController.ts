@@ -103,6 +103,31 @@ export class ReleaseController {
     }
   }
 
+  // Get release statistics / counts for artist
+  async getReleaseStats(req: Request, res: Response): Promise<void> {
+    try {
+      const artistId = (req as ArtistRequest).artist?.id;
+      if (!artistId) {
+        res.status(401).json({ success: false, message: "Unauthorized" });
+        return;
+      }
+
+      const stats = await releaseService.getReleaseCountsByArtist(artistId);
+
+      res.status(200).json({
+        success: true,
+        data: stats,
+      });
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Internal server error";
+      res.status(500).json({
+        success: false,
+        message,
+      });
+    }
+  }
+
   // Get all releases for artist with pagination and filtering
   async getReleases(req: Request, res: Response): Promise<void> {
     try {

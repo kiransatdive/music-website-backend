@@ -124,6 +124,38 @@ export class ReleaseService {
     return { rows, count };
   }
 
+  // Get release counts by status for an artist
+  async getReleaseCountsByArtist(artistId: number): Promise<any> {
+    const counts = await Release.findAll({
+      where: { artistId },
+      attributes: [
+        'status',
+        [sequelize.fn('COUNT', sequelize.col('status')), 'count']
+      ],
+      group: ['status'],
+      raw: true
+    });
+
+    const result: any = {
+      total: 0,
+      draft: 0,
+      pending_review: 0,
+      approved: 0,
+      rejected: 0,
+      live: 0,
+      taken_down: 0
+    };
+
+    counts.forEach((c: any) => {
+      const count = parseInt(c.count as string, 10) || 0;
+      if (result[c.status] !== undefined) {
+        result[c.status] = count;
+      }
+      result.total += count;
+    });
+
+    return result;
+  }
   // Update release details
   async updateRelease(
     releaseId: number,
