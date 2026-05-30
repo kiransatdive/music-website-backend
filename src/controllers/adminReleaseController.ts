@@ -187,3 +187,152 @@ export const takeDownRelease = async (req: Request, res: Response) => {
       .json({ success: false, message: "Failed to take down release" });
   }
 };
+
+export const deleteRelease = async (req: Request, res: Response) => {
+  try {
+    const releaseId = parseInt(req.params.id, 10);
+    if (isNaN(releaseId)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid release ID" });
+    }
+
+    await releaseService.adminDeleteRelease(releaseId);
+    res
+      .status(200)
+      .json({ success: true, message: "Release deleted successfully" });
+  } catch (error) {
+    if (error instanceof ReleaseServiceError) {
+      return res
+        .status(error.statusCode)
+        .json({ success: false, message: error.message });
+    }
+    console.error("Delete Release Error:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to delete release" });
+  }
+};
+
+export const bulkDeleteReleases = async (req: Request, res: Response) => {
+  try {
+    const { releaseIds } = req.body;
+
+    if (!Array.isArray(releaseIds) || releaseIds.length === 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "An array of releaseIds is required" });
+    }
+
+    const validIds = releaseIds
+      .map((id) => parseInt(id as string, 10))
+      .filter((id) => !isNaN(id));
+
+    if (validIds.length === 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "No valid release IDs provided" });
+    }
+
+    const deletedCount = await releaseService.adminBulkDeleteReleases(validIds);
+
+    res.status(200).json({
+      success: true,
+      message: `${deletedCount} release(s) deleted successfully`,
+    });
+  } catch (error) {
+    if (error instanceof ReleaseServiceError) {
+      return res
+        .status(error.statusCode)
+        .json({ success: false, message: error.message });
+    }
+    console.error("Bulk Delete Releases Error:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to bulk delete releases" });
+  }
+};
+
+export const bulkApproveReleases = async (req: Request, res: Response) => {
+  try {
+    const { releaseIds } = req.body;
+
+    if (!Array.isArray(releaseIds) || releaseIds.length === 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "An array of releaseIds is required" });
+    }
+
+    const validIds = releaseIds
+      .map((id) => parseInt(id as string, 10))
+      .filter((id) => !isNaN(id));
+
+    if (validIds.length === 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "No valid release IDs provided" });
+    }
+
+    const updatedCount = await releaseService.adminBulkUpdateReleaseStatus(validIds, "approved");
+
+    res.status(200).json({
+      success: true,
+      message: `${updatedCount} release(s) approved successfully`,
+    });
+  } catch (error) {
+    if (error instanceof ReleaseServiceError) {
+      return res
+        .status(error.statusCode)
+        .json({ success: false, message: error.message });
+    }
+    console.error("Bulk Approve Releases Error:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to bulk approve releases" });
+  }
+};
+
+export const bulkRejectReleases = async (req: Request, res: Response) => {
+  try {
+    const { releaseIds, reason } = req.body;
+
+    if (!Array.isArray(releaseIds) || releaseIds.length === 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "An array of releaseIds is required" });
+    }
+
+    if (!reason) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Rejection reason is required" });
+    }
+
+    const validIds = releaseIds
+      .map((id) => parseInt(id as string, 10))
+      .filter((id) => !isNaN(id));
+
+    if (validIds.length === 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "No valid release IDs provided" });
+    }
+
+    const updatedCount = await releaseService.adminBulkUpdateReleaseStatus(validIds, "rejected", reason);
+
+    res.status(200).json({
+      success: true,
+      message: `${updatedCount} release(s) rejected successfully`,
+    });
+  } catch (error) {
+    if (error instanceof ReleaseServiceError) {
+      return res
+        .status(error.statusCode)
+        .json({ success: false, message: error.message });
+    }
+    console.error("Bulk Reject Releases Error:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to bulk reject releases" });
+  }
+};

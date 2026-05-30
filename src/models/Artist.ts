@@ -79,13 +79,11 @@ Artist.init(
     email: {
       type: DataTypes.STRING(255),
       allowNull: false,
-      unique: true,
       validate: { isEmail: true },
     },
     phone: {
       type: DataTypes.STRING(20),
       allowNull: false,
-      unique: true,
     },
     password: {
       type: DataTypes.STRING(255),
@@ -165,6 +163,16 @@ Artist.init(
     tableName: "artists",
     timestamps: true,
     underscored: true, // maps camelCase fields → snake_case columns
+    indexes: [
+      {
+        unique: true,
+        fields: ["email"],
+      },
+      {
+        unique: true,
+        fields: ["phone"],
+      },
+    ],
   },
 );
 

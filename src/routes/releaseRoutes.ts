@@ -46,7 +46,7 @@ router.delete(
   releaseController.deleteRelease.bind(releaseController),
 );
 
-// Upload track to release
+// Upload track to releases
 router.post(
   "/releases/:id/tracks",
   uploadAudio.single("track"),

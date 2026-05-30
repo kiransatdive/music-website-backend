@@ -10,6 +10,10 @@ import type {
 } from "../utils/releaseValidation.js";
 import notificationService from "./notificationService.js";
 import { sendStatusChangeEmail } from "./emailService.js";
+import YoutubeCriteria from "../models/YoutubeCriteria.js";
+import WhitelistDomain from "../models/WhitelistDomain.js";
+import { URL } from "url";
+import { Op } from "sequelize";
 
 //  Custom Service Error
 
@@ -131,13 +135,6 @@ export class ReleaseService {
       throw new ReleaseServiceError("Release not found", 404);
     }
 
-    if (release.status !== "draft") {
-      throw new ReleaseServiceError(
-        "Can only update releases in draft status",
-        400,
-      );
-    }
-
     // Convert releaseDate string to Date if provided
     const { releaseDate, ...releaseFields } = data;
 
@@ -161,18 +158,11 @@ export class ReleaseService {
     return release;
   }
 
-  // Delete release (only in draft status)
+  // Delete release
   async deleteRelease(releaseId: number, artistId: number): Promise<void> {
     const release = await this.getReleaseById(releaseId, artistId);
     if (!release) {
       throw new ReleaseServiceError("Release not found", 404);
-    }
-
-    if (release.status !== "draft") {
-      throw new ReleaseServiceError(
-        "Can only delete releases in draft status",
-        400,
-      );
     }
 
     await release.destroy();
@@ -214,7 +204,6 @@ export class ReleaseService {
     }
 
     // Validate YouTube Criteria acknowledgment
-    const YoutubeCriteria = require("../models/YoutubeCriteria.js").default;
     const activeCriteria = await YoutubeCriteria.findAll({
       where: { isActive: true },
     });
@@ -232,9 +221,6 @@ export class ReleaseService {
 
     // Auto-validate external links against whitelist
     if (release.externalLinks && release.externalLinks.length > 0) {
-      const { URL } = require("url");
-      const WhitelistDomain = require("../models/WhitelistDomain.js").default;
-
       for (const link of release.externalLinks) {
         try {
           const urlObj = new URL(link);
@@ -363,6 +349,59 @@ export class ReleaseService {
     });
 
     return { rows, count };
+  }
+
+  // Admin: Delete release
+  async adminDeleteRelease(releaseId: number): Promise<void> {
+    const release = await Release.findByPk(releaseId);
+    if (!release) {
+      throw new ReleaseServiceError("Release not found", 404);
+    }
+
+    await release.destroy();
+  }
+
+  // Admin: Bulk delete releases
+  async adminBulkDeleteReleases(releaseIds: number[]): Promise<number> {
+    if (!releaseIds || releaseIds.length === 0) {
+      throw new ReleaseServiceError("No release IDs provided", 400);
+    }
+    
+    // Destroy all releases with these IDs
+    const deletedCount = await Release.destroy({
+      where: {
+        id: {
+          [Op.in]: releaseIds,
+        },
+      },
+    });
+
+    return deletedCount;
+  }
+
+  // Admin: Bulk update release status
+  async adminBulkUpdateReleaseStatus(
+    releaseIds: number[],
+    status: "approved" | "rejected" | "live" | "taken_down",
+    reason?: string,
+  ): Promise<number> {
+    if (!releaseIds || releaseIds.length === 0) {
+      throw new ReleaseServiceError("No release IDs provided", 400);
+    }
+    
+    let updatedCount = 0;
+    // Process sequentially to avoid overwhelming email/notification services
+    for (const id of releaseIds) {
+      try {
+        await this.updateReleaseStatus(id, status, reason);
+        updatedCount++;
+      } catch (error) {
+        console.error(`Failed to update status for release ${id}:`, error);
+        // Continue to the next release instead of failing the whole batch
+      }
+    }
+
+    return updatedCount;
   }
 
   // Admin: Update release status (Approve, Reject, Live, Take down)

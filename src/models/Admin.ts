@@ -37,7 +37,6 @@ Admin.init(
     email: {
       type: DataTypes.STRING(255),
       allowNull: false,
-      unique: true,
       validate: { isEmail: true },
     },
     password: {
@@ -55,6 +54,12 @@ Admin.init(
     tableName: "admins",
     timestamps: true,
     underscored: true,
+    indexes: [
+      {
+        unique: true,
+        fields: ["email"],
+      },
+    ],
   },
 );
 

@@ -39,7 +39,6 @@ Platform.init(
     name: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
     },
     isActive: {
       type: DataTypes.BOOLEAN,
@@ -52,6 +51,12 @@ Platform.init(
     modelName: "Platform",
     tableName: "Platforms",
     timestamps: true,
+    indexes: [
+      {
+        unique: true,
+        fields: ["name"],
+      },
+    ],
   },
 );
 

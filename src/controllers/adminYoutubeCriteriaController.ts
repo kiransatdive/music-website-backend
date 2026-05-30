@@ -114,7 +114,7 @@ class AdminYoutubeCriteriaController {
     }
   }
 
-  // Remove criteria (marks as inactive so existing releases referencing it don't break)
+  // Remove criteria permanently
   async removeCriteria(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
@@ -125,12 +125,11 @@ class AdminYoutubeCriteriaController {
         return;
       }
 
-      criteria.isActive = false;
-      await criteria.save();
+      await criteria.destroy();
 
       res.status(200).json({
         success: true,
-        message: "Criteria removed successfully",
+        message: "Criteria deleted permanently",
       });
     } catch (error) {
       console.error("Error removing youtube criteria:", error);

@@ -143,7 +143,7 @@ export class ReleaseController {
     }
   }
 
-  // Update release details (draft status only)
+  // Update release details
   async updateRelease(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
@@ -193,7 +193,7 @@ export class ReleaseController {
     }
   }
 
-  // Delete release (draft status only)
+  // Delete release
   async deleteRelease(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;

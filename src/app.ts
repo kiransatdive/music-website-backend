@@ -28,7 +28,13 @@ app.use(helmet());
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL ?? "*",
+    origin: [
+      process.env.CLIENT_URL ?? "*",
+      "http://localhost:3001",
+      "http://localhost:3002",
+      "http://localhost:3000",
+      "http://localhost:5000",
+    ],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
