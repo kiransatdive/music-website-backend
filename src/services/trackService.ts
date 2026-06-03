@@ -87,13 +87,22 @@ export class TrackService {
   async updateTrack(
     trackId: number,
     data: Partial<UploadTrackInput>,
+    audioFilePath?: string
   ): Promise<Track> {
     const track = await this.getTrackById(trackId);
     if (!track) {
       throw new TrackServiceError("Track not found", 404);
     }
 
-    await track.update(data);
+    const updateData: any = { ...data };
+
+    if (audioFilePath) {
+      const metadata = await extractAudioMetadata(audioFilePath);
+      updateData.audioFile = audioFilePath;
+      updateData.duration = metadata.duration;
+    }
+
+    await track.update(updateData);
     return track;
   }
 

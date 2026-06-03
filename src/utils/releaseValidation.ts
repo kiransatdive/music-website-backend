@@ -28,6 +28,10 @@ export const submitReleaseSchema = z.object({
     .min(1, "You must acknowledge the YouTube criteria"),
 });
 
+export const addPlatformsSchema = z.object({
+  platformIds: z.array(z.number()).min(1, "At least one platform is required"),
+});
+
 // ─── Track Validation Schemas ────────────────────────────────────────────────
 
 export const uploadTrackSchema = z.object({
@@ -36,6 +40,8 @@ export const uploadTrackSchema = z.object({
   lyrics: z.string().optional(),
   featuredArtists: z.string().optional(),
 });
+
+export const updateTrackSchema = uploadTrackSchema.partial();
 
 // ─── File Validation Schemas ────────────────────────────────────────────────
 
@@ -56,5 +62,6 @@ export type CreateReleaseInput = z.infer<typeof createReleaseSchema>;
 export type UpdateReleaseInput = z.infer<typeof updateReleaseSchema>;
 export type SubmitReleaseInput = z.infer<typeof submitReleaseSchema>;
 export type UploadTrackInput = z.infer<typeof uploadTrackSchema>;
+export type UpdateTrackInput = z.infer<typeof updateTrackSchema>;
 export type AudioFileValidation = z.infer<typeof audioFileValidation>;
 export type ArtworkFileValidation = z.infer<typeof artworkFileValidation>;

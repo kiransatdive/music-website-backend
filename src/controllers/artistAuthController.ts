@@ -1,4 +1,6 @@
 import { Request, Response } from 'express';
+import { URL } from 'url';
+import WhitelistDomain from '../models/WhitelistDomain.js';
 import type { ArtistRequest } from '../middleware/artistAuthMiddleware.js';
 import {
   editArtistProfileService,
@@ -246,56 +248,56 @@ export async function editArtistProfile(req: ArtistRequest, res: Response) {
       ? `/uploads/profile-images/${req.file.filename}`
       : undefined;
 
-      const socialLinks = parseSocialLinks(req.body.socialLinks);
+    const socialLinks = parseSocialLinks(req.body.socialLinks);
 
-      // Validate social links against whitelist
-      if (socialLinks) {
-        const { URL } = require('url');
-        const WhitelistDomain = require('../models/WhitelistDomain.js').default;
+    // Validate social links against whitelist
+    if (socialLinks) {
 
-        for (const [platform, link] of Object.entries(socialLinks)) {
-          if (typeof link === 'string' && link.trim() !== '') {
-            try {
-              const urlObj = new URL(link);
-              let domain = urlObj.hostname.replace(/^www\./, '');
+      for (const [platform, link] of Object.entries(socialLinks)) {
+        if (typeof link === 'string' && link.trim() !== '') {
+          try {
+            const urlObj = new URL(link);
+            let domain = urlObj.hostname.replace(/^www\./, '');
 
-              const isWhitelisted = await WhitelistDomain.findOne({
-                where: {
-                  domain,
-                  status: 'APPROVED',
-                  isActive: true,
-                },
-              });
+            const isWhitelisted = await WhitelistDomain.findOne({
+              where: {
+                domain,
+                status: 'APPROVED',
+                isActive: true,
+              },
+            });
 
-              if (!isWhitelisted) {
-                return res.status(400).json({
-                  success: false,
-                  message: `Link ${domain} is not whitelisted`,
-                });
-              }
-            } catch (e) {
+            if (!isWhitelisted) {
               return res.status(400).json({
                 success: false,
-                message: `Invalid URL format in social links`,
+                message: `Link ${domain} is not whitelisted`,
               });
             }
+          } catch (e) {
+            return res.status(400).json({
+              success: false,
+              message: `Invalid URL format in social links`,
+            });
           }
         }
       }
+    }
 
-      const data = await editArtistProfileService({
-        artistId: req.artist.id,
-        bio: optionalString(req.body.bio),
-        genre: optionalString(req.body.genre),
-        profileImage,
-        socialLinks,
-        accountHolderName: optionalString(req.body.accountHolderName),
-        bankName: optionalString(req.body.bankName),
-        accountNumber: optionalString(req.body.accountNumber),
-        ifscCode: optionalString(req.body.ifscCode),
-        branchName: optionalString(req.body.branchName),
-        upiId: optionalString(req.body.upiId),
-      });
+    const data = await editArtistProfileService({
+      artistId: req.artist.id,
+      name: optionalString(req.body.name),
+      phone: optionalString(req.body.phone),
+      bio: optionalString(req.body.bio),
+      genre: optionalString(req.body.genre),
+      profileImage,
+      socialLinks,
+      accountHolderName: optionalString(req.body.accountHolderName),
+      bankName: optionalString(req.body.bankName),
+      accountNumber: optionalString(req.body.accountNumber),
+      ifscCode: optionalString(req.body.ifscCode),
+      branchName: optionalString(req.body.branchName),
+      upiId: optionalString(req.body.upiId),
+    });
 
     return res.status(200).json({
       success: true,

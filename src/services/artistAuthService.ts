@@ -43,6 +43,8 @@ type ResetPasswordInput = OtpInput & {
 
 type EditArtistProfileInput = {
   artistId: number;
+  name?: string;
+  phone?: string;
   bio?: string;
   genre?: string;
   profileImage?: string;
@@ -57,6 +59,8 @@ type EditArtistProfileInput = {
 
 type EditableArtistProfileFields = Pick<
   ArtistAttributes,
+  | "name"
+  | "phone"
   | "bio"
   | "genre"
   | "profileImage"
@@ -359,8 +363,24 @@ export async function editArtistProfileService(input: EditArtistProfileInput) {
     throw new ServiceError("Artist not found", 404);
   }
 
+  if (input.phone) {
+    const normalizedPhone = normalizePhone(input.phone);
+    if (artist.phone !== normalizedPhone) {
+      const existingPhone = await Artist.findOne({
+        where: { phone: normalizedPhone },
+      });
+
+      if (existingPhone) {
+        throw new ServiceError("Artist with this phone already exists", 409);
+      }
+      input.phone = normalizedPhone;
+    }
+  }
+
   const updates: Partial<EditableArtistProfileFields> = {};
 
+  assignIfDefined(updates, "name", input.name);
+  assignIfDefined(updates, "phone", input.phone);
   assignIfDefined(updates, "bio", input.bio);
   assignIfDefined(updates, "genre", input.genre);
   assignIfDefined(updates, "profileImage", input.profileImage);

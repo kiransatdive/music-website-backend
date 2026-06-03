@@ -53,12 +53,34 @@ router.delete(
   releaseController.deleteRelease.bind(releaseController),
 );
 
+// Get all tracks for a release
+router.get(
+  "/releases/:id/tracks",
+  authenticateArtist,
+  releaseController.getTracks.bind(releaseController),
+);
+
 // Upload track to releases
 router.post(
   "/releases/:id/tracks",
   uploadAudio.single("track"),
   authenticateArtist,
   releaseController.uploadTrack.bind(releaseController),
+);
+
+// Update track details
+router.put(
+  "/releases/:id/tracks/:trackId",
+  authenticateArtist,
+  uploadAudio.single("track"),
+  releaseController.updateTrack.bind(releaseController),
+);
+
+// Delete track
+router.delete(
+  "/releases/:id/tracks/:trackId",
+  authenticateArtist,
+  releaseController.deleteTrack.bind(releaseController),
 );
 
 // Upload artwork for release
@@ -69,10 +91,24 @@ router.post(
   releaseController.uploadArtwork.bind(releaseController),
 );
 
+// Update artwork for release
+router.put(
+  "/releases/:id/artwork",
+  uploadArtwork.single("artwork"),
+  authenticateArtist,
+  releaseController.updateArtwork.bind(releaseController),
+);
+
 // Submit release for review
 router.post(
   "/releases/:id/submit",
   releaseController.submitRelease.bind(releaseController),
+);
+
+// Add platforms to release
+router.post(
+  "/releases/:id/platforms",
+  releaseController.addPlatforms.bind(releaseController),
 );
 
 export default router;

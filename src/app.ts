@@ -17,6 +17,8 @@ import adminWhitelistRoutes from "./routes/adminWhitelistRoutes.js";
 import artistWhitelistRoutes from "./routes/artistWhitelistRoutes.js";
 import adminYoutubeCriteriaRoutes from "./routes/adminYoutubeCriteriaRoutes.js";
 import youtubeCriteriaRoutes from "./routes/youtubeCriteriaRoutes.js";
+import adminPlatformRoutes from "./routes/adminPlatformRoutes.js";
+import platformRoutes from "./routes/platformRoutes.js";
 
 dotenv.config();
 
@@ -68,6 +70,8 @@ app.use("/api", adminWhitelistRoutes);
 app.use("/api", artistWhitelistRoutes);
 app.use("/api", adminYoutubeCriteriaRoutes);
 app.use("/api", youtubeCriteriaRoutes);
+app.use("/api", adminPlatformRoutes);
+app.use("/api", platformRoutes);
 
 app.use((_req, res) => {
   res.status(404).json({ success: false, message: "Route not found" });

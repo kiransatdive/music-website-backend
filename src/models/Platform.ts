@@ -7,6 +7,7 @@ export interface PlatformAttributes {
   id: number;
   name: string;
   isActive: boolean;
+  logo?: string | null;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -25,6 +26,7 @@ class Platform
   public id!: number;
   public name!: string;
   public isActive!: boolean;
+  public logo!: string | null;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
@@ -44,6 +46,10 @@ Platform.init(
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: true,
+    },
+    logo: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
   },
   {

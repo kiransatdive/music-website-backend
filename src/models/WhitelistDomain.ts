@@ -24,8 +24,7 @@ export type WhitelistDomainCreationAttributes = Optional<
 
 class WhitelistDomain
   extends Model<WhitelistDomainAttributes, WhitelistDomainCreationAttributes>
-  implements WhitelistDomainAttributes
-{
+  implements WhitelistDomainAttributes {
   public id!: number;
   public category!: "SOCIAL_MEDIA" | "STREAMING_PLATFORM" | "WEBSITE_DOMAIN";
   public platformName!: string;

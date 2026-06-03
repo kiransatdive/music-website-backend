@@ -117,6 +117,11 @@ export class ReleaseService {
           as: "artist",
           attributes: ["id", "name"],
         },
+        {
+          model: Platform,
+          as: "platforms",
+          attributes: ["id", "name"],
+        },
       ],
       order: [["createdAt", "DESC"]],
     });
@@ -308,7 +313,7 @@ export class ReleaseService {
         {
           model: Track,
           as: "tracks",
-          attributes: ["id", "trackTitle", "duration", "audioFile", "isrc"],
+          attributes: ["id", "trackTitle", "duration", "audioFile", "isrc", "lyrics", "featuredArtists"],
         },
       ],
     });
@@ -376,6 +381,11 @@ export class ReleaseService {
           as: "artist",
           attributes: ["id", "name", "email"],
         },
+        {
+          model: Platform,
+          as: "platforms",
+          attributes: ["id", "name"],
+        },
       ],
       order: [["createdAt", "DESC"]],
     });
@@ -398,7 +408,7 @@ export class ReleaseService {
     if (!releaseIds || releaseIds.length === 0) {
       throw new ReleaseServiceError("No release IDs provided", 400);
     }
-    
+
     // Destroy all releases with these IDs
     const deletedCount = await Release.destroy({
       where: {
@@ -420,7 +430,7 @@ export class ReleaseService {
     if (!releaseIds || releaseIds.length === 0) {
       throw new ReleaseServiceError("No release IDs provided", 400);
     }
-    
+
     let updatedCount = 0;
     // Process sequentially to avoid overwhelming email/notification services
     for (const id of releaseIds) {
