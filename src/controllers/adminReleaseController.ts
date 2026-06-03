@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import releaseService, {
   ReleaseServiceError,
 } from "../services/releaseService.js";
+import Release from "../models/Release.js";
 
 export const getPendingReleases = async (req: Request, res: Response) => {
   try {
@@ -334,5 +335,30 @@ export const bulkRejectReleases = async (req: Request, res: Response) => {
     res
       .status(500)
       .json({ success: false, message: "Failed to bulk reject releases" });
+  }
+};
+
+
+export const getReleaseStats = async (req: Request, res: Response) => {
+  try {
+    const total_releases = await Release.count();
+    const pending_review = await Release.count({ where: { status: "pending_review" } });
+    const approved_release = await Release.count({ where: { status: "approved" } });
+    const live_releases = await Release.count({ where: { status: "live" } });
+    const rejects_release = await Release.count({ where: { status: "rejected" } });
+
+    res.status(200).json({
+      success: true,
+      data: {
+        total_releases,
+        pending_review,
+        approved_release,
+        live_releases,
+        rejects_release,
+      },
+    });
+  } catch (error) {
+    console.error("Get Release Stats Error:", error);
+    res.status(500).json({ success: false, message: "Failed to fetch release stats" });
   }
 };

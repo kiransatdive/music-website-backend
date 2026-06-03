@@ -10,6 +10,7 @@ import {
   bulkDeleteReleases,
   bulkApproveReleases,
   bulkRejectReleases,
+  getReleaseStats,
 } from "../controllers/adminReleaseController.js";
 import { authenticateAdmin } from "../middleware/adminAuthMiddleware.js";
 
@@ -18,6 +19,7 @@ const router = Router();
 // All these routes require admin authentication
 router.use("/admin/releases", authenticateAdmin);
 
+router.get("/admin/releases/stats", getReleaseStats);
 router.get("/admin/releases", getAllReleases);
 router.get("/admin/releases/pending", getPendingReleases);
 router.post("/admin/releases/bulk-approve", bulkApproveReleases);

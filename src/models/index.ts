@@ -12,6 +12,7 @@ import SiteContent from "./SiteContent.js";
 import PricingPlan from "./PricingPlan.js";
 import WhitelistDomain from "./WhitelistDomain.js";
 import YoutubeCriteria from "./YoutubeCriteria.js";
+import RoyaltyReport from "./RoyaltyReport.js";
 
 // Define relationships here to avoid circular dependency issues
 
@@ -60,4 +61,5 @@ export {
   PricingPlan,
   WhitelistDomain,
   YoutubeCriteria,
+  RoyaltyReport,
 };
