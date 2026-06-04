@@ -11,8 +11,10 @@ import {
   bulkApproveReleases,
   bulkRejectReleases,
   getReleaseStats,
+  adminUpdateTrackDetails,
 } from "../controllers/adminReleaseController.js";
 import { authenticateAdmin } from "../middleware/adminAuthMiddleware.js";
+import { uploadAudio } from "../middleware/releaseUploadMiddleware.js";
 
 const router = Router();
 
@@ -30,5 +32,8 @@ router.post("/admin/releases/:id/live", markReleaseLive);
 router.post("/admin/releases/:id/take-down", takeDownRelease);
 router.delete("/admin/releases/bulk-delete", bulkDeleteReleases);
 router.delete("/admin/releases/:id", deleteRelease);
+
+// Track routes
+router.put("/admin/tracks/:id", authenticateAdmin, uploadAudio.single("track"), adminUpdateTrackDetails);
 
 export default router;

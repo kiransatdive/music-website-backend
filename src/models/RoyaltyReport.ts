@@ -12,13 +12,15 @@ export interface RoyaltyReportAttributes {
   income: number | null;
   adminExp: number | null;
   royalty: number | null;
+  month: string | null;
+  stream: number | null;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
 export interface RoyaltyReportCreationAttributes extends Optional<
   RoyaltyReportAttributes,
-  "id" | "mainLabel" | "subLabel" | "records" | "totalPlays" | "income" | "adminExp" | "royalty"
+  "id" | "mainLabel" | "subLabel" | "records" | "totalPlays" | "income" | "adminExp" | "royalty" | "month" | "stream"
 > { }
 
 // RoyaltyReport Model
@@ -34,6 +36,8 @@ class RoyaltyReport
   public income!: number | null;
   public adminExp!: number | null;
   public royalty!: number | null;
+  public month!: string | null;
+  public stream!: number | null;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
@@ -75,6 +79,14 @@ RoyaltyReport.init(
     },
     royalty: {
       type: DataTypes.DECIMAL(16, 8),
+      allowNull: true,
+    },
+    month: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    stream: {
+      type: DataTypes.INTEGER,
       allowNull: true,
     },
   },

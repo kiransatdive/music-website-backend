@@ -775,6 +775,23 @@ export class ReleaseController {
         validationResult.data.youtubeCriteriaIds,
       );
 
+      try {
+        const Artist = (await import("../models/Artist.js")).default;
+        const AdminNotification = (await import("../models/AdminNotification.js")).default;
+        
+        const artist = await Artist.findByPk(artistId);
+        const artistName = artist ? artist.name : `Artist ${artistId}`;
+
+        await AdminNotification.create({
+          title: "New Release Submission",
+          message: `${artistName} has submitted a new release "${release.title}" for review.`,
+          type: "release_submission",
+          isRead: false,
+        });
+      } catch (err) {
+        console.error("Failed to create admin notification for release submission", err);
+      }
+
       res.status(200).json({
         success: true,
         message: "Release submitted successfully",

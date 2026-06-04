@@ -7,10 +7,22 @@ const router = Router();
 // Protect all admin whitelist routes with admin middleware
 router.use("/admin/whitelist", authenticateAdmin);
 
+// Create New Entry
+router.post(
+  "/admin/whitelist",
+  adminWhitelistController.createWhitelistDomain.bind(adminWhitelistController),
+);
+
 // Get All Whitelist Entries
 router.get(
   "/admin/whitelist",
   adminWhitelistController.getWhitelistDomains.bind(adminWhitelistController),
+);
+
+// Update Entry
+router.put(
+  "/admin/whitelist/:id",
+  adminWhitelistController.updateWhitelistDomain.bind(adminWhitelistController),
 );
 
 // Get Single Entry

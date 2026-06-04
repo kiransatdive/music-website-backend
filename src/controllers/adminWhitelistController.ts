@@ -5,10 +5,94 @@ import whitelistService, {
 import {
   toggleWhitelistStatusSchema,
   rejectWhitelistSchema,
+  createWhitelistSchema,
 } from "../utils/whitelistValidation.js";
 import type { AdminRequest } from "../middleware/adminAuthMiddleware.js";
 
 class AdminWhitelistController {
+  async createWhitelistDomain(req: Request, res: Response): Promise<void> {
+    try {
+      const adminId = (req as AdminRequest).admin?.id;
+      if (!adminId) {
+        res.status(401).json({ success: false, message: "Unauthorized" });
+        return;
+      }
+
+      const validationResult = createWhitelistSchema.safeParse(req.body);
+      if (!validationResult.success) {
+        res.status(400).json({
+          success: false,
+          message: "Validation failed",
+          errors: validationResult.error.flatten(),
+        });
+        return;
+      }
+
+      const whitelist = await whitelistService.adminCreateWhitelistDomain(
+        validationResult.data,
+        adminId,
+      );
+
+      res.status(201).json({
+        success: true,
+        message: "Whitelist domain created successfully",
+        data: whitelist,
+      });
+    } catch (error) {
+      if (error instanceof WhitelistServiceError) {
+        res
+          .status(error.statusCode)
+          .json({ success: false, message: error.message });
+        return;
+      }
+      res
+        .status(500)
+        .json({ success: false, message: "Internal server error" });
+    }
+  }
+
+  async updateWhitelistDomain(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      const adminId = (req as AdminRequest).admin?.id;
+      if (!adminId) {
+        res.status(401).json({ success: false, message: "Unauthorized" });
+        return;
+      }
+
+      const validationResult = createWhitelistSchema.partial().safeParse(req.body);
+      if (!validationResult.success) {
+        res.status(400).json({
+          success: false,
+          message: "Validation failed",
+          errors: validationResult.error.flatten(),
+        });
+        return;
+      }
+
+      const whitelist = await whitelistService.updateWhitelistDomain(
+        parseInt(id, 10),
+        validationResult.data,
+      );
+
+      res.status(200).json({
+        success: true,
+        message: "Whitelist domain updated successfully",
+        data: whitelist,
+      });
+    } catch (error) {
+      if (error instanceof WhitelistServiceError) {
+        res
+          .status(error.statusCode)
+          .json({ success: false, message: error.message });
+        return;
+      }
+      res
+        .status(500)
+        .json({ success: false, message: "Internal server error" });
+    }
+  }
+
   async getWhitelistDomains(req: Request, res: Response): Promise<void> {
     try {
       const {

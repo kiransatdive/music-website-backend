@@ -250,6 +250,18 @@ export async function registerArtistService(input: RegisterArtistInput) {
   });
 
   try {
+    const AdminNotification = (await import("../models/AdminNotification.js")).default;
+    await AdminNotification.create({
+      title: "New Artist Registration",
+      message: `A new artist named "${artist.name}" (${artist.email}) has registered.`,
+      type: "artist_registration",
+      isRead: false,
+    });
+  } catch (err) {
+    console.error("Failed to create admin notification for new artist", err);
+  }
+
+  try {
     await sendOtpEmail(artist.email, otp, "email verification");
   } catch {
     await artist.destroy();

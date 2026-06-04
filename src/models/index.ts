@@ -14,6 +14,8 @@ import WhitelistDomain from "./WhitelistDomain.js";
 import YoutubeCriteria from "./YoutubeCriteria.js";
 import RoyaltyReport from "./RoyaltyReport.js";
 
+import AdminNotification from "./AdminNotification.js";
+
 // Define relationships here to avoid circular dependency issues
 
 // Artist has many Releases
@@ -57,6 +59,7 @@ export {
   Platform,
   ReleasePlatform,
   Notification,
+  AdminNotification,
   SiteContent,
   PricingPlan,
   WhitelistDomain,

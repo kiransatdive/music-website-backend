@@ -40,6 +40,52 @@ export class WhitelistService {
     return whitelist;
   }
 
+  async updateWhitelistDomain(
+    id: number,
+    data: Partial<CreateWhitelistInput>,
+  ): Promise<WhitelistDomain> {
+    const whitelist = await this.getWhitelistDomain(id);
+
+    if (data.domain && data.domain !== whitelist.domain) {
+      const existing = await WhitelistDomain.findOne({
+        where: { domain: data.domain },
+      });
+      if (existing) {
+        throw new WhitelistServiceError(
+          "Domain already exists in whitelist",
+          400,
+        );
+      }
+    }
+
+    await whitelist.update(data);
+    return whitelist;
+  }
+
+  async adminCreateWhitelistDomain(
+    data: CreateWhitelistInput,
+    adminId: number,
+  ): Promise<WhitelistDomain> {
+    const existing = await WhitelistDomain.findOne({
+      where: { domain: data.domain },
+    });
+    if (existing) {
+      throw new WhitelistServiceError(
+        "Domain already exists in whitelist",
+        400,
+      );
+    }
+
+    const whitelist = await WhitelistDomain.create({
+      ...data,
+      status: "APPROVED",
+      isActive: true,
+      adminId: adminId,
+    });
+
+    return whitelist;
+  }
+
   async getWhitelistDomains(options: {
     category?: string;
     search?: string;

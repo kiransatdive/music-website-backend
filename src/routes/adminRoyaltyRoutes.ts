@@ -3,6 +3,8 @@ import multer from "multer";
 import {
   uploadRoyaltyReport,
   getAllRoyaltyReports,
+  getRevenueAnalytics,
+  getRoyaltyFilesSummary,
 } from "../controllers/adminRoyaltyController.js";
 import { authenticateAdmin } from "../middleware/adminAuthMiddleware.js";
 
@@ -21,6 +23,10 @@ router.post(
   upload.single("file"),
   uploadRoyaltyReport
 );
+
+router.get("/admin/royalty-report/analytics", authenticateAdmin, getRevenueAnalytics);
+
+router.get("/admin/report/summary", authenticateAdmin, getRoyaltyFilesSummary);
 
 router.get("/admin/royalty-report", authenticateAdmin, getAllRoyaltyReports);
 

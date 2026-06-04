@@ -2,6 +2,9 @@ import { Request, Response } from "express";
 import releaseService, {
   ReleaseServiceError,
 } from "../services/releaseService.js";
+import trackService, {
+  TrackServiceError,
+} from "../services/trackService.js";
 import Release from "../models/Release.js";
 
 export const getPendingReleases = async (req: Request, res: Response) => {
@@ -362,3 +365,75 @@ export const getReleaseStats = async (req: Request, res: Response) => {
     res.status(500).json({ success: false, message: "Failed to fetch release stats" });
   }
 };
+
+export const adminUpdateTrackDetails = async (req: Request, res: Response) => {
+  try {
+    const trackId = parseInt(req.params.id, 10);
+    if (isNaN(trackId)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid track ID" });
+    }
+
+    const { trackTitle, isrc, lyrics, featuredArtists } = req.body;
+
+    // Allow updating these specific fields
+    const updateData = {
+      ...(trackTitle !== undefined && { trackTitle }),
+      ...(isrc !== undefined && { isrc }),
+      ...(lyrics !== undefined && { lyrics }),
+      ...(featuredArtists !== undefined && { featuredArtists })
+    };
+
+    const audioFilePath = req.file?.path;
+
+    const track = await trackService.updateTrack(trackId, updateData, audioFilePath);
+
+    res.status(200).json({
+      success: true,
+      message: "Track details updated successfully",
+      track,
+    });
+  } catch (error) {
+    if (error instanceof TrackServiceError) {
+      return res
+        .status(error.statusCode)
+        .json({ success: false, message: error.message });
+    }
+    console.error("Admin Update Track Details Error:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to update track details" });
+  }
+};
+export const adminUpdateReleaseDetails = async (req: Request, res: Response) => {
+  try {
+    const releaseId = parseInt(req.params.id, 10);
+    if (isNaN(releaseId)) {
+      return res.status(400).json({ success: false, message: "Invalid release ID" });
+    }
+
+    const { title, genre, language, release_type, label_name, upc, isrc } = req.body;
+
+    const release = await Release.findByPk(releaseId);
+    if (!release) {
+      return res.status(404).json({ success: false, message: "Release not found" });
+    }
+
+    await release.update({
+      ...(title !== undefined && { title }),
+      ...(genre !== undefined && { genre }),
+      ...(language !== undefined && { language }),
+      ...(release_type !== undefined && { releaseType: release_type }),
+      ...(label_name !== undefined && { labelName: label_name }),
+      ...(upc !== undefined && { upc }),
+      ...(isrc !== undefined && { isrc }),
+    });
+
+    res.status(200).json({ success: true, message: "Release updated successfully", release });
+  } catch (error) {
+    console.error("Admin Update Release Details Error:", error);
+    res.status(500).json({ success: false, message: "Failed to update release details" });
+  }
+};
+

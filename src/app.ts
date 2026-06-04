@@ -21,6 +21,7 @@ import adminPlatformRoutes from "./routes/adminPlatformRoutes.js";
 import platformRoutes from "./routes/platformRoutes.js";
 import adminRoyaltyRoutes from "./routes/adminRoyaltyRoutes.js";
 import adminDashboardRoutes from "./routes/adminDashboardRoutes.js";
+import adminNotificationRoutes from "./routes/adminNotificationRoutes.js";
 
 dotenv.config();
 
@@ -76,6 +77,7 @@ app.use("/api", adminPlatformRoutes);
 app.use("/api", platformRoutes);
 app.use("/api", adminRoyaltyRoutes);
 app.use("/api", adminDashboardRoutes);
+app.use("/api", adminNotificationRoutes);
 
 app.use((_req, res) => {
   res.status(404).json({ success: false, message: "Route not found" });

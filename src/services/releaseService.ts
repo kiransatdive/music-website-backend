@@ -120,7 +120,7 @@ export class ReleaseService {
         {
           model: Platform,
           as: "platforms",
-          attributes: ["id", "name"],
+          attributes: ["id", "name", "logo"],
         },
       ],
       order: [["createdAt", "DESC"]],
@@ -328,7 +328,7 @@ export class ReleaseService {
 
     // Get associated platforms using the association getter
     const platforms = await (release as any).getPlatforms({
-      attributes: ["id", "name"],
+      attributes: ["id", "name", "logo"],
     });
 
     return {
@@ -384,7 +384,7 @@ export class ReleaseService {
         {
           model: Platform,
           as: "platforms",
-          attributes: ["id", "name"],
+          attributes: ["id", "name", "logo"],
         },
       ],
       order: [["createdAt", "DESC"]],
