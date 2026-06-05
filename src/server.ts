@@ -23,7 +23,7 @@ async function connectDatabase(): Promise<void> {
     await sequelize.authenticate();
     console.log("✅ Database connected successfully");
 
-    await sequelize.sync({ alter: true });
+    await sequelize.sync(); // Removed { alter: true } to speed up backend startup
     await seedDefaultAdmin();
     console.log("✅ Database models synced");
   } catch (error) {

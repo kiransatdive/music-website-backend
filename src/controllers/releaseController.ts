@@ -19,6 +19,11 @@ import {
 } from "../utils/mediaProcessing.js";
 import path from "path";
 import type { ArtistRequest } from "../middleware/artistAuthMiddleware.js";
+import Artist from "../models/Artist.js";
+import RoyaltyReport from "../models/RoyaltyReport.js";
+import Release from "../models/Release.js";
+import sequelize from "../config/database.js";
+import { Op } from "sequelize";
 
 export class ReleaseController {
   // Create a new release
@@ -113,9 +118,65 @@ export class ReleaseController {
 
       const stats = await releaseService.getReleaseCountsByArtist(artistId);
 
+      const artist = await Artist.findByPk(artistId);
+      let total_income = 0;
+      let monthwiseRevenue: any[] = [];
+      let monthwiseLiveReleases: any[] = [];
+
+      if (artist) {
+        const royaltyWhere = {
+          [Op.or]: [
+            { subLabel: artist.artistLabelName || artist.name },
+            { mainLabel: artist.artistLabelName || artist.name },
+          ],
+        };
+
+        const royaltyStats = await RoyaltyReport.findAll({
+          attributes: [
+            [sequelize.fn("SUM", sequelize.col("income")), "totalIncome"],
+          ],
+          where: royaltyWhere,
+          raw: true,
+        });
+
+        if (royaltyStats && royaltyStats.length > 0) {
+          total_income = parseFloat((royaltyStats[0] as any).totalIncome) || 0;
+        }
+
+        monthwiseRevenue = await RoyaltyReport.findAll({
+          attributes: [
+            [sequelize.fn("DATE_FORMAT", sequelize.col("createdAt"), "%Y-%m"), "month"],
+            [sequelize.fn("SUM", sequelize.col("income")), "revenue"],
+          ],
+          where: royaltyWhere,
+          group: [sequelize.fn("DATE_FORMAT", sequelize.col("createdAt"), "%Y-%m")],
+          order: [[sequelize.fn("DATE_FORMAT", sequelize.col("createdAt"), "%Y-%m"), "ASC"]],
+          raw: true,
+        });
+
+        monthwiseLiveReleases = await Release.findAll({
+          attributes: [
+            [sequelize.fn("DATE_FORMAT", sequelize.col("createdAt"), "%Y-%m"), "month"],
+            [sequelize.fn("COUNT", sequelize.col("id")), "count"],
+          ],
+          where: {
+            status: "live",
+            artistId: artistId
+          },
+          group: [sequelize.fn("DATE_FORMAT", sequelize.col("createdAt"), "%Y-%m")],
+          order: [[sequelize.fn("DATE_FORMAT", sequelize.col("createdAt"), "%Y-%m"), "ASC"]],
+          raw: true,
+        });
+      }
+
       res.status(200).json({
         success: true,
-        data: stats,
+        data: {
+          ...stats,
+          total_income,
+          monthwiseRevenue,
+          monthwiseLiveReleases,
+        },
       });
     } catch (error) {
       const message =
@@ -778,7 +839,7 @@ export class ReleaseController {
       try {
         const Artist = (await import("../models/Artist.js")).default;
         const AdminNotification = (await import("../models/AdminNotification.js")).default;
-        
+
         const artist = await Artist.findByPk(artistId);
         const artistName = artist ? artist.name : `Artist ${artistId}`;
 

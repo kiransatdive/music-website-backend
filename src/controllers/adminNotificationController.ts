@@ -104,3 +104,31 @@ export const deleteAdminNotification = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const bulkDeleteAdminNotifications = async (req: Request, res: Response) => {
+  try {
+    const { ids } = req.body;
+
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ success: false, message: "Please provide an array of notification IDs to delete." });
+    }
+
+    await AdminNotification.destroy({
+      where: {
+        id: ids,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Notifications deleted successfully",
+    });
+  } catch (error: any) {
+    console.error("Error bulk deleting notifications:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to bulk delete notifications",
+      error: error.message,
+    });
+  }
+};

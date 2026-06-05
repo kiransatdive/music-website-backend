@@ -6,6 +6,10 @@ import trackService, {
   TrackServiceError,
 } from "../services/trackService.js";
 import Release from "../models/Release.js";
+import Artist from "../models/Artist.js";
+import RoyaltyReport from "../models/RoyaltyReport.js";
+import sequelize from "../config/database.js";
+import { Op } from "sequelize";
 
 export const getPendingReleases = async (req: Request, res: Response) => {
   try {
@@ -350,6 +354,35 @@ export const getReleaseStats = async (req: Request, res: Response) => {
     const live_releases = await Release.count({ where: { status: "live" } });
     const rejects_release = await Release.count({ where: { status: "rejected" } });
 
+    const total_artists = await Artist.count();
+
+    const artists = await Artist.findAll({ attributes: ["artistLabelName", "name"] });
+    const validNames = artists.map((a: any) => a.artistLabelName || a.name).filter(Boolean);
+
+    let total_income = 0;
+    let total_streams = 0;
+
+    if (validNames.length > 0) {
+      const royaltyStats = await RoyaltyReport.findAll({
+        attributes: [
+          [sequelize.fn("SUM", sequelize.col("income")), "totalIncome"],
+          [sequelize.fn("SUM", sequelize.col("stream")), "totalStreams"],
+        ],
+        where: {
+          [Op.or]: [
+            { subLabel: { [Op.in]: validNames } },
+            { mainLabel: { [Op.in]: validNames } },
+          ],
+        },
+        raw: true,
+      });
+
+      if (royaltyStats && royaltyStats.length > 0) {
+        total_income = parseFloat((royaltyStats[0] as any).totalIncome) || 0;
+        total_streams = parseInt((royaltyStats[0] as any).totalStreams, 10) || 0;
+      }
+    }
+
     res.status(200).json({
       success: true,
       data: {
@@ -358,6 +391,9 @@ export const getReleaseStats = async (req: Request, res: Response) => {
         approved_release,
         live_releases,
         rejects_release,
+        total_artists,
+        total_income,
+        total_streams,
       },
     });
   } catch (error) {
@@ -434,6 +470,59 @@ export const adminUpdateReleaseDetails = async (req: Request, res: Response) => 
   } catch (error) {
     console.error("Admin Update Release Details Error:", error);
     res.status(500).json({ success: false, message: "Failed to update release details" });
+  }
+};
+
+export const getReleaseDetailsAdmin = async (req: Request, res: Response) => {
+  try {
+    const releaseId = parseInt(req.params.id, 10);
+    if (isNaN(releaseId)) {
+      return res.status(400).json({ success: false, message: "Invalid release ID" });
+    }
+
+    // Call getReleaseDetails without passing an artistId so it works for admins
+    const release = await releaseService.getReleaseDetails(releaseId);
+
+    if (!release) {
+      return res.status(404).json({ success: false, message: "Release not found" });
+    }
+
+    res.status(200).json({ success: true, data: release });
+  } catch (error) {
+    console.error("Get Release Details Admin Error:", error);
+    res.status(500).json({ success: false, message: "Failed to fetch release details" });
+  }
+};
+
+export const adminUpdateArtwork = async (req: Request, res: Response) => {
+  try {
+    const releaseId = parseInt(req.params.id, 10);
+    if (isNaN(releaseId)) {
+      return res.status(400).json({ success: false, message: "Invalid release ID" });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: "Artwork file is required" });
+    }
+
+    const release = await Release.findByPk(releaseId);
+    if (!release) {
+      return res.status(404).json({ success: false, message: "Release not found" });
+    }
+
+    await release.update({ artwork: req.file.path });
+
+    // Fetch full updated release details
+    const updatedRelease = await releaseService.getReleaseDetails(releaseId);
+
+    res.status(200).json({
+      success: true,
+      message: "Artwork updated successfully",
+      data: updatedRelease || release,
+    });
+  } catch (error) {
+    console.error("Admin Update Artwork Error:", error);
+    res.status(500).json({ success: false, message: "Failed to update artwork" });
   }
 };
 
