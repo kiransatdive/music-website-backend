@@ -3,6 +3,7 @@ import platformService, { PlatformServiceError } from "../services/platformServi
 import { createPlatformSchema } from "../utils/platformValidation.js";
 import path from "path";
 import { deleteFile, validateArtworkFile } from "../utils/mediaProcessing.js";
+import { uploadFileToS3 } from "../utils/s3Uploader.js";
 
 export class AdminPlatformController {
   async createPlatform(req: Request, res: Response): Promise<void> {
@@ -32,7 +33,9 @@ export class AdminPlatformController {
 
       let logoPath: string | undefined;
       if (req.file) {
-        logoPath = path.relative(path.join(process.cwd(), "uploads"), req.file.path).replace(/\\/g, "/");
+        const destinationKey = `platforms/${Date.now()}-${req.file.originalname}`;
+        logoPath = await uploadFileToS3(req.file.path, destinationKey, req.file.mimetype);
+        await deleteFile(req.file.path);
       }
 
       const platform = await platformService.createPlatform({

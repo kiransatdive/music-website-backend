@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import { URL } from 'url';
 import WhitelistDomain from '../models/WhitelistDomain.js';
 import type { ArtistRequest } from '../middleware/artistAuthMiddleware.js';
+import { uploadFileToS3, deleteFileFromS3 } from '../utils/s3Uploader.js';
+import fs from 'fs/promises';
 import {
   editArtistProfileService,
   forgotArtistPasswordService,
@@ -244,9 +246,22 @@ export async function editArtistProfile(req: ArtistRequest, res: Response) {
       });
     }
 
-    const profileImage = req.file
-      ? `/uploads/profile-images/${req.file.filename}`
-      : undefined;
+    let profileImage: string | undefined = undefined;
+
+    if (req.file) {
+      try {
+        const destinationKey = `profile-images/${Date.now()}-${req.file.filename}`;
+        profileImage = await uploadFileToS3(req.file.path, destinationKey, req.file.mimetype);
+        
+        // Delete the local temp file
+        await fs.unlink(req.file.path).catch(err => console.error("Failed to delete temp profile image:", err));
+      } catch (err) {
+        return res.status(500).json({
+          success: false,
+          message: "Failed to upload profile image to S3",
+        });
+      }
+    }
 
     const socialLinks = parseSocialLinks(req.body.socialLinks);
 

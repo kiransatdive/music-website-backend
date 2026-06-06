@@ -1,6 +1,8 @@
 import Track from "../models/Track.js";
 import Release from "../models/Release.js";
 import { extractAudioMetadata } from "../utils/mediaProcessing.js";
+import { uploadFileToS3, deleteFileFromS3 } from "../utils/s3Uploader.js";
+import path from "path";
 import type { UploadTrackInput } from "../utils/releaseValidation.js";
 
 //  Custom Service Error
@@ -34,11 +36,15 @@ export class TrackService {
       // Extract audio metadata
       const metadata = await extractAudioMetadata(audioFilePath);
 
+      // Upload track to S3
+      const destinationKey = `audio/${Date.now()}-${path.basename(audioFilePath)}`;
+      const s3Url = await uploadFileToS3(audioFilePath, destinationKey, "audio/wav");
+
       // Create track
       const track = await Track.create({
         releaseId,
         trackTitle: data.trackTitle,
-        audioFile: audioFilePath,
+        audioFile: s3Url,
         duration: metadata.duration,
         isrc: data.isrc,
         lyrics: data.lyrics,
@@ -98,7 +104,15 @@ export class TrackService {
 
     if (audioFilePath) {
       const metadata = await extractAudioMetadata(audioFilePath);
-      updateData.audioFile = audioFilePath;
+      
+      const destinationKey = `audio/${Date.now()}-${path.basename(audioFilePath)}`;
+      const s3Url = await uploadFileToS3(audioFilePath, destinationKey, "audio/wav");
+
+      if (track.audioFile) {
+        await deleteFileFromS3(track.audioFile);
+      }
+
+      updateData.audioFile = s3Url;
       updateData.duration = metadata.duration;
     }
 
@@ -111,6 +125,10 @@ export class TrackService {
     const track = await Track.findByPk(trackId);
     if (!track) {
       throw new TrackServiceError("Track not found", 404);
+    }
+
+    if (track.audioFile) {
+      await deleteFileFromS3(track.audioFile);
     }
 
     await track.destroy();

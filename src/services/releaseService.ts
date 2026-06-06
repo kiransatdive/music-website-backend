@@ -14,6 +14,8 @@ import YoutubeCriteria from "../models/YoutubeCriteria.js";
 import WhitelistDomain from "../models/WhitelistDomain.js";
 import { URL } from "url";
 import { Op } from "sequelize";
+import { uploadFileToS3, deleteFileFromS3 } from "../utils/s3Uploader.js";
+import path from "path";
 
 //  Custom Service Error
 
@@ -202,17 +204,29 @@ export class ReleaseService {
       throw new ReleaseServiceError("Release not found", 404);
     }
 
+    if (release.artwork) {
+      await deleteFileFromS3(release.artwork);
+    }
+
+    // Associated tracks are deleted via DB cascade or we could delete their files too, but let's stick to Release.
     await release.destroy();
   }
 
   // Upload artwork
-  async updateArtwork(releaseId: number, artistId: number, artworkPath: string): Promise<Release> {
+  async updateArtwork(releaseId: number, artistId: number, artworkPath: string, mimetype: string): Promise<Release> {
     const release = await this.getReleaseById(releaseId, artistId);
     if (!release) {
       throw new ReleaseServiceError('Release not found', 404);
     }
 
-    await release.update({ artwork: artworkPath });
+    if (release.artwork) {
+      await deleteFileFromS3(release.artwork);
+    }
+
+    const destinationKey = `covers/${Date.now()}-${path.basename(artworkPath)}`;
+    const s3Url = await uploadFileToS3(artworkPath, destinationKey, mimetype);
+
+    await release.update({ artwork: s3Url });
     return release;
   }
 
@@ -273,7 +287,7 @@ export class ReleaseService {
 
           if (!isWhitelisted) {
             // Auto-reject the release
-            const reason = `Link ${domain} is not whitelisted`;
+            const reason = `Link ${link} is not whitelisted`;
             await release.update({
               status: "rejected",
               rejectionReason: reason,
@@ -398,6 +412,10 @@ export class ReleaseService {
     const release = await Release.findByPk(releaseId);
     if (!release) {
       throw new ReleaseServiceError("Release not found", 404);
+    }
+
+    if (release.artwork) {
+      await deleteFileFromS3(release.artwork);
     }
 
     await release.destroy();

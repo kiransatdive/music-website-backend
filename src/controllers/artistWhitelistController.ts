@@ -62,7 +62,7 @@ class ArtistWhitelistController {
       const { limit = "20", offset = "0" } = req.query;
 
       const result = await whitelistService.getWhitelistDomains({
-        artistId,
+        status: "APPROVED",
         limit: parseInt(limit as string, 10),
         offset: parseInt(offset as string, 10),
       });

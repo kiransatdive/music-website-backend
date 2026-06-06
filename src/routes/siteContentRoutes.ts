@@ -10,10 +10,10 @@ import {
 const router = express.Router();
 
 // Get all site content
-router.get("/admin/content", authenticateAdmin, getAllContent);
+router.get("/admin/content", getAllContent);
 
 // Get content for a specific section
-router.get("/admin/content/:section", authenticateAdmin, getContentBySection);
+router.get("/admin/content/:section", getContentBySection);
 
 // Create or update content
 router.post("/admin/content", authenticateAdmin, createOrUpdateContent);

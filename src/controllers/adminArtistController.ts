@@ -43,6 +43,37 @@ export const getAllArtists = async (req: Request, res: Response) => {
   }
 };
 
+export const getArtistById = async (req: Request, res: Response) => {
+  try {
+    const artistId = parseInt(req.params.id, 10);
+    if (isNaN(artistId)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid artist ID" });
+    }
+
+    const artist = await Artist.findByPk(artistId, {
+      attributes: { exclude: ["password", "otp"] }, // Don't send sensitive info
+    });
+
+    if (!artist) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Artist not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: artist,
+    });
+  } catch (error) {
+    console.error("Get Artist By ID Error:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to fetch artist" });
+  }
+};
+
 export const deleteArtist = async (req: Request, res: Response) => {
   try {
     const artistId = parseInt(req.params.id, 10);

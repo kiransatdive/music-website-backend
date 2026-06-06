@@ -1,4 +1,5 @@
 import WhitelistDomain from "../models/WhitelistDomain.js";
+import Artist from "../models/Artist.js";
 import { ServiceError } from "./artistAuthService.js";
 import {
   CreateWhitelistInput,
@@ -121,6 +122,13 @@ export class WhitelistService {
       limit: options.limit,
       offset: options.offset,
       order: [["createdAt", "DESC"]],
+      include: [
+        {
+          model: Artist,
+          as: "artist",
+          attributes: ["id", "name", "email"],
+        },
+      ],
     });
   }
 

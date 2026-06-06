@@ -9,12 +9,10 @@ import { authenticateAdmin } from "../middleware/adminAuthMiddleware.js";
 
 const router = Router();
 
-// All pricing plan APIs require admin access
-router.use("/admin/pricing-plans", authenticateAdmin);
 
 router.get("/admin/pricing-plans", getAllPricingPlans);
-router.post("/admin/pricing-plans", createPricingPlan);
-router.put("/admin/pricing-plans/:id", updatePricingPlan);
-router.delete("/admin/pricing-plans/:id", deletePricingPlan);
+router.post("/admin/pricing-plans", authenticateAdmin, createPricingPlan);
+router.put("/admin/pricing-plans/:id", authenticateAdmin, updatePricingPlan);
+router.delete("/admin/pricing-plans/:id", authenticateAdmin, deletePricingPlan);
 
 export default router;

@@ -446,6 +446,9 @@ export class ReleaseController {
         validationResult.data
       );
 
+      // Clean up local temp file
+      await deleteFile(req.file.path);
+
       res.status(201).json({
         success: true,
         message: "Track uploaded successfully",
@@ -545,6 +548,11 @@ export class ReleaseController {
         validationResult.data,
         audioFilePath
       );
+
+      // Clean up local temp file
+      if (req.file) {
+        await deleteFile(req.file.path);
+      }
 
       res.status(200).json({
         success: true,
@@ -698,13 +706,10 @@ export class ReleaseController {
         return;
       }
 
-      // Save artwork path
-      const artwork = path.relative(
-        path.join(process.cwd(), "uploads"),
-        req.file.path,
-      );
+      const updatedRelease = await releaseService.updateArtwork(parseInt(id, 10), artistId, req.file.path, req.file.mimetype);
 
-      const updatedRelease = await releaseService.updateArtwork(parseInt(id, 10), artistId, artwork);
+      // Clean up local temp file
+      await deleteFile(req.file.path);
 
       res.status(201).json({
         success: true,
@@ -794,13 +799,10 @@ export class ReleaseController {
         return;
       }
 
-      // Save artwork path
-      const artwork = path.relative(
-        path.join(process.cwd(), "uploads"),
-        req.file.path,
-      );
+      const updatedRelease = await releaseService.updateArtwork(parseInt(id, 10), artistId, req.file.path, req.file.mimetype);
 
-      const updatedRelease = await releaseService.updateArtwork(parseInt(id, 10), artistId, artwork);
+      // Clean up local temp file
+      await deleteFile(req.file.path);
 
       res.status(200).json({
         success: true,
@@ -866,12 +868,21 @@ export class ReleaseController {
         const artist = await Artist.findByPk(artistId);
         const artistName = artist ? artist.name : `Artist ${artistId}`;
 
-        await AdminNotification.create({
-          title: "New Release Submission",
-          message: `${artistName} has submitted a new release "${release.title}" for review.`,
-          type: "release_submission",
-          isRead: false,
-        });
+        if (release.status === "rejected") {
+          await AdminNotification.create({
+            title: "Release Auto-Rejected",
+            message: `${artistName}'s release "${release.title}" was auto-rejected. Flag: ${release.rejectionReason}`,
+            type: "release_rejected",
+            isRead: false,
+          });
+        } else {
+          await AdminNotification.create({
+            title: "New Release Submission",
+            message: `${artistName} has submitted a new release "${release.title}" for review.`,
+            type: "release_submission",
+            isRead: false,
+          });
+        }
       } catch (err) {
         console.error("Failed to create admin notification for release submission", err);
       }
