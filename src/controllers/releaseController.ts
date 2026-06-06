@@ -124,12 +124,35 @@ export class ReleaseController {
       let monthwiseLiveReleases: any[] = [];
 
       if (artist) {
-        const royaltyWhere = {
-          [Op.or]: [
-            { subLabel: artist.artistLabelName || artist.name },
-            { mainLabel: artist.artistLabelName || artist.name },
-          ],
+        const trimmedName = artist.name.trim();
+        const subLabelWhere = { subLabel: { [Op.like]: `%${trimmedName}%` } };
+
+        let targetMainLabel = artist.artistLabelName && artist.artistLabelName.trim() !== ""
+          ? artist.artistLabelName.trim()
+          : null;
+
+        if (!targetMainLabel) {
+          const labelCounts = await RoyaltyReport.findAll({
+            attributes: ['mainLabel', [sequelize.fn('COUNT', sequelize.col('id')), 'count']],
+            where: subLabelWhere,
+            group: ['mainLabel'],
+            order: [[sequelize.literal('count'), 'DESC']],
+            limit: 1,
+            raw: true
+          });
+
+          if (labelCounts && labelCounts.length > 0 && (labelCounts[0] as any).mainLabel) {
+            targetMainLabel = (labelCounts[0] as any).mainLabel;
+          }
+        }
+
+        const royaltyWhere: any = {
+          ...subLabelWhere
         };
+
+        if (targetMainLabel) {
+          royaltyWhere.mainLabel = { [Op.like]: `%${targetMainLabel}%` };
+        }
 
         const royaltyStats = await RoyaltyReport.findAll({
           attributes: [
@@ -145,12 +168,12 @@ export class ReleaseController {
 
         monthwiseRevenue = await RoyaltyReport.findAll({
           attributes: [
-            [sequelize.fn("DATE_FORMAT", sequelize.col("createdAt"), "%Y-%m"), "month"],
-            [sequelize.fn("SUM", sequelize.col("income")), "revenue"],
+            "month",
+            [sequelize.fn("SUM", sequelize.col("income")), "income"],
           ],
           where: royaltyWhere,
-          group: [sequelize.fn("DATE_FORMAT", sequelize.col("createdAt"), "%Y-%m")],
-          order: [[sequelize.fn("DATE_FORMAT", sequelize.col("createdAt"), "%Y-%m"), "ASC"]],
+          group: ["month"],
+          order: [["month", "ASC"]],
           raw: true,
         });
 
