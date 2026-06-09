@@ -35,6 +35,7 @@ export async function uploadFileToS3(
       Key: destinationKey,
       Body: fileContent,
       ContentType: contentType,
+      ACL: "public-read",
     });
 
     await s3Client.send(command);
@@ -53,6 +54,46 @@ export async function uploadFileToS3(
   } catch (error) {
     console.error("Error uploading file to S3:", error);
     throw new Error("Failed to upload file to S3");
+  }
+}
+
+/**
+ * Uploads a buffer to S3 and returns its public URL
+ */
+export async function uploadBufferToS3(
+  buffer: Buffer,
+  destinationKey: string,
+  contentType: string
+): Promise<string> {
+  if (!BUCKET_NAME) {
+    throw new Error("AWS_S3_BUCKET_NAME is not configured. Please check your .env file.");
+  }
+
+  try {
+    const command = new PutObjectCommand({
+      Bucket: BUCKET_NAME,
+      Key: destinationKey,
+      Body: buffer,
+      ContentType: contentType,
+      ACL: "public-read",
+    });
+
+    await s3Client.send(command);
+
+    // Construct the public S3 URL
+    const region = process.env.AWS_REGION || "us-east-1";
+    let publicUrl = `https://${BUCKET_NAME}.s3.${region}.amazonaws.com/${destinationKey}`;
+
+    if (process.env.AWS_ENDPOINT) {
+      // e.g. AWS_ENDPOINT=https://sgp1.digitaloceanspaces.com
+      const endpointUrl = new URL(process.env.AWS_ENDPOINT);
+      publicUrl = `${endpointUrl.protocol}//${BUCKET_NAME}.${endpointUrl.host}/${destinationKey}`;
+    }
+
+    return publicUrl;
+  } catch (error) {
+    console.error("Error uploading buffer to S3:", error);
+    throw new Error("Failed to upload buffer to S3");
   }
 }
 

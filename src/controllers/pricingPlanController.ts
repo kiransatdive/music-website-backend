@@ -23,7 +23,7 @@ export const createPricingPlan = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const { name, description, price, isActive } = req.body;
+    const { name, description, price, isActive, priceText, duration, revenueShare, buttonText, buttonLink, features } = req.body;
 
     if (!name || !description || price === undefined) {
       res
@@ -40,6 +40,12 @@ export const createPricingPlan = async (
       description,
       price,
       isActive: isActive !== undefined ? isActive : true,
+      priceText,
+      duration,
+      revenueShare,
+      buttonText,
+      buttonLink,
+      features,
     });
 
     res
@@ -62,7 +68,7 @@ export const updatePricingPlan = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
-    const { name, description, price, isActive } = req.body;
+    const { name, description, price, isActive, priceText, duration, revenueShare, buttonText, buttonLink, features } = req.body;
 
     const plan = await PricingPlan.findByPk(id);
 
@@ -78,6 +84,12 @@ export const updatePricingPlan = async (
       description: description !== undefined ? description : plan.description,
       price: price !== undefined ? price : plan.price,
       isActive: isActive !== undefined ? isActive : plan.isActive,
+      priceText: priceText !== undefined ? priceText : plan.priceText,
+      duration: duration !== undefined ? duration : plan.duration,
+      revenueShare: revenueShare !== undefined ? revenueShare : plan.revenueShare,
+      buttonText: buttonText !== undefined ? buttonText : plan.buttonText,
+      buttonLink: buttonLink !== undefined ? buttonLink : plan.buttonLink,
+      features: features !== undefined ? features : plan.features,
     });
 
     res

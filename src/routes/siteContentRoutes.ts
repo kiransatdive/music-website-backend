@@ -1,5 +1,6 @@
 import express from "express";
 import { authenticateAdmin } from "../middleware/adminAuthMiddleware.js";
+import { uploadSiteMedia } from "../middleware/uploadMiddleware.js";
 import {
   getContentBySection,
   getAllContent,
@@ -16,8 +17,8 @@ router.get("/admin/content", getAllContent);
 router.get("/admin/content/:section", getContentBySection);
 
 // Create or update content
-router.post("/admin/content", authenticateAdmin, createOrUpdateContent);
-router.put("/admin/content", authenticateAdmin, createOrUpdateContent); // Optional alias for POST
+router.post("/admin/content", authenticateAdmin, uploadSiteMedia.any(), createOrUpdateContent);
+router.put("/admin/content", authenticateAdmin, uploadSiteMedia.any(), createOrUpdateContent); // Optional alias for POST
 
 // Delete content by ID
 router.delete("/admin/content/:id", authenticateAdmin, deleteContent);
