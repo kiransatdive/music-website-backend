@@ -104,7 +104,7 @@ Release.init(
     },
     labelName: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     upc: {
       type: DataTypes.STRING,

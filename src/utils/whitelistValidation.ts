@@ -11,8 +11,8 @@ export const createWhitelistSchema = z.object({
         // Basic domain validation, e.g., spotify.com
         return /^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(val);
       },
-      { message: "Invalid domain format" },
     ),
+  artistId: z.number().int().positive().optional(),
 });
 
 export const toggleWhitelistStatusSchema = z.object({

@@ -39,9 +39,17 @@ export class ReleaseService {
     data: CreateReleaseInput,
   ): Promise<Release> {
     try {
+      const artist = await Artist.findByPk(artistId);
+      if (!artist) {
+        throw new ReleaseServiceError("Artist not found", 404);
+      }
+
+      const labelName = data.labelName || artist.label || artist.artistLabelName || "Independent";
+
       // Convert releaseDate string to Date if needed
       const releaseData = {
         ...data,
+        labelName,
         releaseDate:
           typeof data.releaseDate === "string"
             ? new Date(data.releaseDate)
@@ -54,6 +62,7 @@ export class ReleaseService {
 
       return release;
     } catch (error) {
+      if (error instanceof ReleaseServiceError) throw error;
       throw new ReleaseServiceError("Failed to create release", 500);
     }
   }

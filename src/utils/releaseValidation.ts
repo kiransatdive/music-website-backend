@@ -8,7 +8,7 @@ export const createReleaseSchema = z.object({
   language: z.string().min(1, "Language is required").max(50),
   releaseDate: z.string().datetime().or(z.date()),
   releaseType: z.enum(["single", "ep", "album"]),
-  labelName: z.string().min(1, "Label name is required").max(255),
+  labelName: z.string().max(255).optional(),
   upc: z.string().optional(),
   externalLinks: z.array(z.string().url("Invalid URL")).optional(),
 });
