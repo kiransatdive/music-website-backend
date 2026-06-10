@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { URL } from 'url';
-import WhitelistDomain from '../models/WhitelistDomain.js';
-import type { ArtistRequest } from '../middleware/artistAuthMiddleware.js';
-import { uploadFileToS3, deleteFileFromS3 } from '../utils/s3Uploader.js';
+import WhitelistDomain from '../models/WhitelistDomain.ts';
+import type { ArtistRequest } from '../middleware/artistAuthMiddleware.ts';
+import { uploadFileToS3, deleteFileFromS3 } from '../utils/s3Uploader.ts';
 import fs from 'fs/promises';
 import {
   editArtistProfileService,

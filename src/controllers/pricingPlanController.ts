@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { PricingPlan } from "../models/index.js";
+import { PricingPlan } from "../models/index.ts";
 
 // Get all pricing plans
 export const getAllPricingPlans = async (

@@ -1,10 +1,10 @@
 import express from "express";
-import releaseController from "../controllers/releaseController.js";
+import releaseController from "../controllers/releaseController.ts";
 import {
   uploadAudio,
   uploadArtwork,
 } from "../middleware/releaseUploadMiddleware.js";
-import { authenticateArtist } from "../middleware/artistAuthMiddleware.js";
+import { authenticateArtist } from "../middleware/artistAuthMiddleware.ts";
 
 const router = express.Router();
 

@@ -1,6 +1,6 @@
 import { Router } from "express";
-import adminPlatformController from "../controllers/adminPlatformController.js";
-import { authenticateArtist } from "../middleware/artistAuthMiddleware.js";
+import adminPlatformController from "../controllers/adminPlatformController.ts";
+import { authenticateArtist } from "../middleware/artistAuthMiddleware.ts";
 
 const router = Router();
 

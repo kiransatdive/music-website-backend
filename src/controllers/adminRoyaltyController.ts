@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import * as xlsx from "xlsx";
-import RoyaltyReport from "../models/RoyaltyReport.js";
-import Release from "../models/Release.js";
-import sequelize from "../config/database.js";
+import RoyaltyReport from "../models/RoyaltyReport.ts";
+import Release from "../models/Release.ts";
+import sequelize from "../config/database.ts";
 
 export const uploadRoyaltyReport = async (req: Request, res: Response) => {
   try {

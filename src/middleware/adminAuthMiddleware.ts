@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import { verifyAdminToken } from "../services/adminAuthService.js";
-import { ServiceError } from "../services/artistAuthService.js";
+import { verifyAdminToken } from "../services/adminAuthService.ts";
+import { ServiceError } from "../services/artistAuthService.ts";
 
 export interface AdminRequest extends Request {
   admin?: {

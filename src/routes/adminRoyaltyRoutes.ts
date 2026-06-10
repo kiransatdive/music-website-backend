@@ -6,7 +6,7 @@ import {
   getRevenueAnalytics,
   getRoyaltyFilesSummary,
 } from "../controllers/adminRoyaltyController.js";
-import { authenticateAdmin } from "../middleware/adminAuthMiddleware.js";
+import { authenticateAdmin } from "../middleware/adminAuthMiddleware.ts";
 
 const router = express.Router();
 

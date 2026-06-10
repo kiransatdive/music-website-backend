@@ -6,7 +6,7 @@ import {
   deleteNotification,
   bulkDeleteNotifications,
 } from "../controllers/notificationController.js";
-import { authenticateArtist } from "../middleware/artistAuthMiddleware.js";
+import { authenticateArtist } from "../middleware/artistAuthMiddleware.ts";
 
 const router = Router();
 

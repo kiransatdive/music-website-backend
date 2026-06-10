@@ -9,8 +9,8 @@ import {
   resetArtistPassword,
   verifyArtistOtp,
 } from "../controllers/artistAuthController.js";
-import { authenticateArtist } from "../middleware/artistAuthMiddleware.js";
-import { uploadProfileImage } from "../middleware/uploadMiddleware.js";
+import { authenticateArtist } from "../middleware/artistAuthMiddleware.ts";
+import { uploadProfileImage } from "../middleware/uploadMiddleware.ts";
 
 const router = Router();
 

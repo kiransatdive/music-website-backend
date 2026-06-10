@@ -1,6 +1,6 @@
 import { Router } from "express";
-import adminYoutubeCriteriaController from "../controllers/adminYoutubeCriteriaController.js";
-import { authenticateAdmin } from "../middleware/adminAuthMiddleware.js";
+import adminYoutubeCriteriaController from "../controllers/adminYoutubeCriteriaController.ts";
+import { authenticateAdmin } from "../middleware/adminAuthMiddleware.ts";
 
 const router = Router();
 

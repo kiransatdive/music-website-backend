@@ -1,6 +1,6 @@
 import { Router } from "express";
-import youtubeCriteriaController from "../controllers/youtubeCriteriaController.js";
-import { authenticateArtist } from "../middleware/artistAuthMiddleware.js";
+import youtubeCriteriaController from "../controllers/youtubeCriteriaController.ts";
+import { authenticateArtist } from "../middleware/artistAuthMiddleware.ts";
 
 const router = Router();
 

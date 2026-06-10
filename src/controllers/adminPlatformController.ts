@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
-import platformService, { PlatformServiceError } from "../services/platformService.js";
-import { createPlatformSchema } from "../utils/platformValidation.js";
+import platformService, { PlatformServiceError } from "../services/platformService.ts";
+import { createPlatformSchema } from "../utils/platformValidation.ts";
 import path from "path";
-import { deleteFile, validateArtworkFile } from "../utils/mediaProcessing.js";
-import { uploadFileToS3 } from "../utils/s3Uploader.js";
+import { deleteFile, validateArtworkFile } from "../utils/mediaProcessing.ts";
+import { uploadFileToS3 } from "../utils/s3Uploader.ts";
 
 export class AdminPlatformController {
   async createPlatform(req: Request, res: Response): Promise<void> {

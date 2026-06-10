@@ -7,7 +7,7 @@ import {
   rejectWhitelistSchema,
   createWhitelistSchema,
 } from "../utils/whitelistValidation.js";
-import type { AdminRequest } from "../middleware/adminAuthMiddleware.js";
+import type { AdminRequest } from "../middleware/adminAuthMiddleware.ts";
 
 class AdminWhitelistController {
   async createWhitelistDomain(req: Request, res: Response): Promise<void> {

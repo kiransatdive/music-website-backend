@@ -1,7 +1,7 @@
 import { DataTypes, Model, Optional } from "sequelize";
-import sequelize from "../config/database.js";
-import Admin from "./Admin.js";
-import Artist from "./Artist.js";
+import sequelize from "../config/database.ts";
+import Admin from "./Admin.ts";
+import Artist from "./Artist.ts";
 
 export interface WhitelistDomainAttributes {
   id: number;

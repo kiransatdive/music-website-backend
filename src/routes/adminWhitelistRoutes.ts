@@ -1,6 +1,6 @@
 import { Router } from "express";
-import adminWhitelistController from "../controllers/adminWhitelistController.js";
-import { authenticateAdmin } from "../middleware/adminAuthMiddleware.js";
+import adminWhitelistController from "../controllers/adminWhitelistController.ts";
+import { authenticateAdmin } from "../middleware/adminAuthMiddleware.ts";
 
 const router = Router();
 

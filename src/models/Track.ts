@@ -1,6 +1,6 @@
 import { DataTypes, Model, Optional } from "sequelize";
-import sequelize from "../config/database.js";
-import Release from "./Release.js";
+import sequelize from "../config/database.ts";
+import Release from "./Release.ts";
 
 // Attribute Interfaces
 

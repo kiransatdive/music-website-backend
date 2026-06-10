@@ -1,9 +1,9 @@
-import Track from "../models/Track.js";
-import Release from "../models/Release.js";
-import { extractAudioMetadata } from "../utils/mediaProcessing.js";
-import { uploadFileToS3, deleteFileFromS3 } from "../utils/s3Uploader.js";
+import Track from "../models/Track.ts";
+import Release from "../models/Release.ts";
+import { extractAudioMetadata } from "../utils/mediaProcessing.ts";
+import { uploadFileToS3, deleteFileFromS3 } from "../utils/s3Uploader.ts";
 import path from "path";
-import type { UploadTrackInput } from "../utils/releaseValidation.js";
+import type { UploadTrackInput } from "../utils/releaseValidation.ts";
 
 //  Custom Service Error
 

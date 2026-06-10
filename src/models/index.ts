@@ -1,20 +1,20 @@
 // Model Imports
 // This file ensures all models are imported and registered with Sequelize
 
-import Admin from "./Admin.js";
-import Artist from "./Artist.js";
-import Release from "./Release.js";
-import Track from "./Track.js";
-import Platform from "./Platform.js";
-import ReleasePlatform from "./ReleasePlatform.js";
-import Notification from "./Notification.js";
-import SiteContent from "./SiteContent.js";
-import PricingPlan from "./PricingPlan.js";
-import WhitelistDomain from "./WhitelistDomain.js";
-import YoutubeCriteria from "./YoutubeCriteria.js";
-import RoyaltyReport from "./RoyaltyReport.js";
+import Admin from "./Admin.ts";
+import Artist from "./Artist.ts";
+import Release from "./Release.ts";
+import Track from "./Track.ts";
+import Platform from "./Platform.ts";
+import ReleasePlatform from "./ReleasePlatform.ts";
+import Notification from "./Notification.ts";
+import SiteContent from "./SiteContent.ts";
+import PricingPlan from "./PricingPlan.ts";
+import WhitelistDomain from "./WhitelistDomain.ts";
+import YoutubeCriteria from "./YoutubeCriteria.ts";
+import RoyaltyReport from "./RoyaltyReport.ts";
 
-import AdminNotification from "./AdminNotification.js";
+import AdminNotification from "./AdminNotification.ts";
 
 // Define relationships here to avoid circular dependency issues
 

@@ -1,6 +1,6 @@
 import express from "express";
-import { authenticateAdmin } from "../middleware/adminAuthMiddleware.js";
-import { uploadSiteMedia } from "../middleware/uploadMiddleware.js";
+import { authenticateAdmin } from "../middleware/adminAuthMiddleware.ts";
+import { uploadSiteMedia } from "../middleware/uploadMiddleware.ts";
 import {
   getContentBySection,
   getAllContent,

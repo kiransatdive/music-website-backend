@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import releaseService, {
   ReleaseServiceError,
 } from "../services/releaseService.js";
-import trackService, { TrackServiceError } from "../services/trackService.js";
+import trackService, { TrackServiceError } from "../services/trackService.ts";
 import {
   createReleaseSchema,
   updateReleaseSchema,
@@ -18,11 +18,11 @@ import {
   deleteFile,
 } from "../utils/mediaProcessing.js";
 import path from "path";
-import type { ArtistRequest } from "../middleware/artistAuthMiddleware.js";
-import Artist from "../models/Artist.js";
-import RoyaltyReport from "../models/RoyaltyReport.js";
-import Release from "../models/Release.js";
-import sequelize from "../config/database.js";
+import type { ArtistRequest } from "../middleware/artistAuthMiddleware.ts";
+import Artist from "../models/Artist.ts";
+import RoyaltyReport from "../models/RoyaltyReport.ts";
+import Release from "../models/Release.ts";
+import sequelize from "../config/database.ts";
 import { Op } from "sequelize";
 
 export class ReleaseController {

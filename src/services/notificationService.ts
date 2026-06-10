@@ -1,6 +1,6 @@
-import Notification from "../models/Notification.js";
-import Artist from "../models/Artist.js";
-import { sendNotificationEmail } from "./emailService.js";
+import Notification from "../models/Notification.ts";
+import Artist from "../models/Artist.ts";
+import { sendNotificationEmail } from "./emailService.ts";
 import { Op } from "sequelize";
 
 export class NotificationServiceError extends Error {

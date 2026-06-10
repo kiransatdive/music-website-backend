@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { SiteContent } from "../models/index.js";
-import { uploadFileToS3, deleteFileFromS3, uploadBufferToS3 } from "../utils/s3Uploader.js";
+import { SiteContent } from "../models/index.ts";
+import { uploadFileToS3, deleteFileFromS3, uploadBufferToS3 } from "../utils/s3Uploader.ts";
 import fs from "fs";
 
 export const getContentBySection = async (req: Request, res: Response) => {

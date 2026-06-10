@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import AdminNotification from "../models/AdminNotification.js";
+import AdminNotification from "../models/AdminNotification.ts";
 
 export const getAdminNotifications = async (req: Request, res: Response) => {
   try {

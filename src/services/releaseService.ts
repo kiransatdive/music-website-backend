@@ -1,20 +1,20 @@
-import Release from "../models/Release.js";
-import Track from "../models/Track.js";
-import ReleasePlatform from "../models/ReleasePlatform.js";
-import Platform from "../models/Platform.js";
-import Artist from "../models/Artist.js";
-import sequelize from "../config/database.js";
+import Release from "../models/Release.ts";
+import Track from "../models/Track.ts";
+import ReleasePlatform from "../models/ReleasePlatform.ts";
+import Platform from "../models/Platform.ts";
+import Artist from "../models/Artist.ts";
+import sequelize from "../config/database.ts";
 import type {
   CreateReleaseInput,
   UpdateReleaseInput,
 } from "../utils/releaseValidation.js";
-import notificationService from "./notificationService.js";
-import { sendStatusChangeEmail } from "./emailService.js";
-import YoutubeCriteria from "../models/YoutubeCriteria.js";
-import WhitelistDomain from "../models/WhitelistDomain.js";
+import notificationService from "./notificationService.ts";
+import { sendStatusChangeEmail } from "./emailService.ts";
+import YoutubeCriteria from "../models/YoutubeCriteria.ts";
+import WhitelistDomain from "../models/WhitelistDomain.ts";
 import { URL } from "url";
 import { Op } from "sequelize";
-import { uploadFileToS3, deleteFileFromS3 } from "../utils/s3Uploader.js";
+import { uploadFileToS3, deleteFileFromS3 } from "../utils/s3Uploader.ts";
 import path from "path";
 
 //  Custom Service Error

@@ -1,4 +1,4 @@
-import Platform from "../models/Platform.js";
+import Platform from "../models/Platform.ts";
 
 export class PlatformServiceError extends Error {
   public statusCode: number;

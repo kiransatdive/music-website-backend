@@ -1,6 +1,6 @@
 import { Router } from "express";
-import artistWhitelistController from "../controllers/artistWhitelistController.js";
-import { authenticateArtist } from "../middleware/artistAuthMiddleware.js";
+import artistWhitelistController from "../controllers/artistWhitelistController.ts";
+import { authenticateArtist } from "../middleware/artistAuthMiddleware.ts";
 
 const router = Router();
 

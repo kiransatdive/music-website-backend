@@ -1,8 +1,8 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import type { SignOptions } from "jsonwebtoken";
-import Admin from "../models/Admin.js";
-import { ServiceError } from "./artistAuthService.js";
+import Admin from "../models/Admin.ts";
+import { ServiceError } from "./artistAuthService.ts";
 
 const ADMIN_ROLE = "admin";
 const BCRYPT_SALT_ROUNDS = 12;

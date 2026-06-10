@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import Artist from "../models/Artist.js";
-import Release from "../models/Release.js";
-import RoyaltyReport from "../models/RoyaltyReport.js";
-import sequelize from "../config/database.js";
+import Artist from "../models/Artist.ts";
+import Release from "../models/Release.ts";
+import RoyaltyReport from "../models/RoyaltyReport.ts";
+import sequelize from "../config/database.ts";
 
 export const getDashboardStats = async (req: Request, res: Response) => {
   try {

@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { getAllArtists, getArtistById, deleteArtist, updateArtist } from "../controllers/adminArtistController.js";
-import { authenticateAdmin } from "../middleware/adminAuthMiddleware.js";
+import { getAllArtists, getArtistById, deleteArtist, updateArtist } from "../controllers/adminArtistController.ts";
+import { authenticateAdmin } from "../middleware/adminAuthMiddleware.ts";
 
 const router = Router();
 

@@ -1,7 +1,7 @@
 import { DataTypes, Model } from "sequelize";
-import sequelize from "../config/database.js";
-import Release from "./Release.js";
-import Platform from "./Platform.js";
+import sequelize from "../config/database.ts";
+import Release from "./Release.ts";
+import Platform from "./Platform.ts";
 
 // Attribute Interfaces
 

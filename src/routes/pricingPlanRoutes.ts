@@ -5,7 +5,7 @@ import {
   updatePricingPlan,
   deletePricingPlan,
 } from "../controllers/pricingPlanController.js";
-import { authenticateAdmin } from "../middleware/adminAuthMiddleware.js";
+import { authenticateAdmin } from "../middleware/adminAuthMiddleware.ts";
 
 const router = Router();
 

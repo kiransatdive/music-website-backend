@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { YoutubeCriteria } from "../models/index.js";
+import { YoutubeCriteria } from "../models/index.ts";
 
 class YoutubeCriteriaController {
   // Fetch active criteria for artists to acknowledge

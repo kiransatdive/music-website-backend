@@ -1,6 +1,6 @@
 import { DataTypes, Model, Optional } from "sequelize";
-import sequelize from "../config/database.js";
-import Artist from "./Artist.js";
+import sequelize from "../config/database.ts";
+import Artist from "./Artist.ts";
 
 export interface NotificationAttributes {
   id: number;

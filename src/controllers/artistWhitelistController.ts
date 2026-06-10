@@ -2,8 +2,8 @@ import { Request, Response } from "express";
 import whitelistService, {
   WhitelistServiceError,
 } from "../services/whitelistService.js";
-import { createWhitelistSchema } from "../utils/whitelistValidation.js";
-import type { ArtistRequest } from "../middleware/artistAuthMiddleware.js";
+import { createWhitelistSchema } from "../utils/whitelistValidation.ts";
+import type { ArtistRequest } from "../middleware/artistAuthMiddleware.ts";
 
 class ArtistWhitelistController {
   async submitWhitelistDomain(req: Request, res: Response): Promise<void> {

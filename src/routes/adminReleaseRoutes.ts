@@ -16,8 +16,8 @@ import {
   adminUpdateArtwork,
   adminUpdateReleaseDetails,
 } from "../controllers/adminReleaseController.js";
-import { authenticateAdmin } from "../middleware/adminAuthMiddleware.js";
-import { uploadAudio, uploadArtwork } from "../middleware/releaseUploadMiddleware.js";
+import { authenticateAdmin } from "../middleware/adminAuthMiddleware.ts";
+import { uploadAudio, uploadArtwork } from "../middleware/releaseUploadMiddleware.ts";
 
 const router = Router();
 

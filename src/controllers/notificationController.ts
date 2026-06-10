@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { ArtistRequest } from "../middleware/artistAuthMiddleware.js";
+import { ArtistRequest } from "../middleware/artistAuthMiddleware.ts";
 import notificationService, {
   NotificationServiceError,
 } from "../services/notificationService.js";

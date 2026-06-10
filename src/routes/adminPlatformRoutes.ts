@@ -1,8 +1,8 @@
 import { Router } from "express";
-import adminPlatformController from "../controllers/adminPlatformController.js";
-import { authenticateAdmin } from "../middleware/adminAuthMiddleware.js";
+import adminPlatformController from "../controllers/adminPlatformController.ts";
+import { authenticateAdmin } from "../middleware/adminAuthMiddleware.ts";
 
-import { uploadArtwork } from "../middleware/releaseUploadMiddleware.js";
+import { uploadArtwork } from "../middleware/releaseUploadMiddleware.ts";
 
 const router = Router();
 

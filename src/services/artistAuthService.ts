@@ -2,10 +2,10 @@ import bcrypt from "bcryptjs";
 import { randomInt } from "crypto";
 import jwt from "jsonwebtoken";
 import type { SignOptions } from "jsonwebtoken";
-import Artist from "../models/Artist.js";
-import type { ArtistAttributes } from "../models/Artist.js";
-import { sendOtpEmail } from "./emailService.js";
-import type { OtpEmailPurpose } from "./emailService.js";
+import Artist from "../models/Artist.ts";
+import type { ArtistAttributes } from "../models/Artist.ts";
+import { sendOtpEmail } from "./emailService.ts";
+import type { OtpEmailPurpose } from "./emailService.ts";
 
 const ARTIST_ROLE = "artist";
 const BCRYPT_SALT_ROUNDS = 12;

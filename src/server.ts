@@ -1,9 +1,9 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import app from "./app.js";
-import sequelize from "./config/database.js";
-import { seedDefaultAdmin } from "./services/adminAuthService.js";
+import app from "./app.ts";
+import sequelize from "./config/database.ts";
+import { seedDefaultAdmin } from "./services/adminAuthService.ts";
 import "./models/index.js"; // Import all models to register them
 
 const PORT = parseInt(process.env.PORT ?? "3000", 10);

@@ -1,6 +1,6 @@
-import WhitelistDomain from "../models/WhitelistDomain.js";
-import Artist from "../models/Artist.js";
-import { ServiceError } from "./artistAuthService.js";
+import WhitelistDomain from "../models/WhitelistDomain.ts";
+import Artist from "../models/Artist.ts";
+import { ServiceError } from "./artistAuthService.ts";
 import {
   CreateWhitelistInput,
   RejectWhitelistInput,

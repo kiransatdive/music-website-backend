@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Artist } from "../models/index.js";
+import { Artist } from "../models/index.ts";
 import { Op } from "sequelize";
 import bcrypt from "bcryptjs";
 

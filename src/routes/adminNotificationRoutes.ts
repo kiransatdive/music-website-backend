@@ -6,7 +6,7 @@ import {
   deleteAdminNotification,
   bulkDeleteAdminNotifications,
 } from "../controllers/adminNotificationController.js";
-import { authenticateAdmin } from "../middleware/adminAuthMiddleware.js";
+import { authenticateAdmin } from "../middleware/adminAuthMiddleware.ts";
 
 const router = express.Router();
 

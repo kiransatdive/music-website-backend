@@ -5,10 +5,10 @@ import releaseService, {
 import trackService, {
   TrackServiceError,
 } from "../services/trackService.js";
-import Release from "../models/Release.js";
-import Artist from "../models/Artist.js";
-import RoyaltyReport from "../models/RoyaltyReport.js";
-import sequelize from "../config/database.js";
+import Release from "../models/Release.ts";
+import Artist from "../models/Artist.ts";
+import RoyaltyReport from "../models/RoyaltyReport.ts";
+import sequelize from "../config/database.ts";
 import { Op } from "sequelize";
 
 export const getPendingReleases = async (req: Request, res: Response) => {

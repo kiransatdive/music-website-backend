@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { loginAdminService } from "../services/adminAuthService.js";
-import { ServiceError } from "../services/artistAuthService.js";
+import { loginAdminService } from "../services/adminAuthService.ts";
+import { ServiceError } from "../services/artistAuthService.ts";
 
 function sendError(res: Response, error: unknown, fallbackMessage: string) {
   if (error instanceof ServiceError) {
